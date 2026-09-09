@@ -152,6 +152,7 @@ La app verifica el resultado leyendo el valor después de cada cambio. Si la ver
 
 ## Historial de versiones
 
+- **v0.5.1**: corregido el interruptor que quedaba deshabilitado hasta pulsar “Actualizar estado” tras iniciar.
 - **v0.5**: selector de idioma en la ventana principal (English / 简体中文 / Español).
 - **v0.4**: interfaz trilingüe (inglés predeterminado, 简体中文, Español) en GUI y herramientas de shell.
 - **v0.3**: corregido el fallo al cerrar la ventana de registros; ahora se detiene y se oculta.

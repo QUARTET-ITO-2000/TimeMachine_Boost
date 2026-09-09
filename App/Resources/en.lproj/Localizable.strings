@@ -8,7 +8,7 @@
 "main.refresh" = "Refresh State";
 "main.privilegedRead" = "Read with Administrator Privileges";
 "main.openLogs" = "Real-time Logs…";
-"main.version" = "v0.5 prototype";
+"main.version" = "v0.5.1 prototype";
 "main.note1" = "Boost mode sets debug.lowpri_throttle_enabled to 0. It only applies to the current session and resets after reboot.";
 "main.note2" = "Toggling and “Read with Administrator Privileges” request system administrator authorization. In this prototype, every request is expected.";
 

@@ -403,7 +403,6 @@ static NSString *const kLogPath = @"/usr/bin/log";
         NSString *value = [self readSysctlValue];
         dispatch_async(dispatch_get_main_queue(), ^{
             self.busy = NO;
-            [self updateControlStates];
             if (value) {
                 self.stateKnown = YES;
                 self.toggle.state = [value isEqualToString:@"0"]
@@ -417,8 +416,8 @@ static NSString *const kLogPath = @"/usr/bin/log";
                 self.stateKnown = NO;
                 [self updateStatus:NSLocalizedString(@"status.readFailed", @"")
                              error:YES];
-                [self updateControlStates];
             }
+            [self updateControlStates];
         });
     });
 }
@@ -437,7 +436,6 @@ static NSString *const kLogPath = @"/usr/bin/log";
         NSString *output = [self runAdminShellCommand:shell status:&status];
         dispatch_async(dispatch_get_main_queue(), ^{
             self.busy = NO;
-            [self updateControlStates];
             if (status == 0 && ([output isEqualToString:@"0"] || [output isEqualToString:@"1"])) {
                 self.stateKnown = YES;
                 self.toggle.state = [output isEqualToString:@"0"]
@@ -455,8 +453,8 @@ static NSString *const kLogPath = @"/usr/bin/log";
                     : [NSString stringWithFormat:
                         NSLocalizedString(@"status.privilegedReadFailed", @""), status]
                              error:YES];
-                [self updateControlStates];
             }
+            [self updateControlStates];
         });
     });
 }
@@ -485,7 +483,6 @@ static NSString *const kLogPath = @"/usr/bin/log";
 
         dispatch_async(dispatch_get_main_queue(), ^{
             self.busy = NO;
-            [self updateControlStates];
             if (status == 0 && [output isEqualToString:target]) {
                 self.stateKnown = YES;
                 self.toggle.state = accelerate
@@ -503,6 +500,7 @@ static NSString *const kLogPath = @"/usr/bin/log";
                     NSLocalizedString(@"status.toggleFailed", @""), status]
                              error:YES];
             }
+            [self updateControlStates];
         });
     });
 }

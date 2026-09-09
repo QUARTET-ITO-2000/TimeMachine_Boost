@@ -152,6 +152,7 @@ The app verifies the result by reading the value back after each change. If the 
 
 ## Version history
 
+- **v0.5.1**: Fixed the switch remaining disabled until “Refresh State” was clicked after launch.
 - **v0.5**: Added an in-window language selector (English / 简体中文 / Español).
 - **v0.4**: Trilingual UI (English default, 简体中文, Español) for the GUI and shell tools.
 - **v0.3**: Fixed the crash when closing the log window; it now stops and hides instead.
