@@ -12,6 +12,7 @@ static NSString *const kLogPath = @"/usr/bin/log";
 @property (nonatomic, strong) NSTextField *statusLabel;
 @property (nonatomic, strong) NSButton *refreshButton;
 @property (nonatomic, strong) NSButton *authReadButton;
+@property (nonatomic, strong) NSPopUpButton *languagePopup;
 @property (nonatomic, strong) NSWindow *logWindow;
 @property (nonatomic, strong) NSTextView *logTextView;
 @property (nonatomic, strong) NSTextField *logStatusLabel;
@@ -71,7 +72,7 @@ static NSString *const kLogPath = @"/usr/bin/log";
 }
 
 - (void)buildWindow {
-    NSRect contentRect = NSMakeRect(0, 0, 520, 330);
+    NSRect contentRect = NSMakeRect(0, 0, 520, 380);
     NSWindowStyleMask style = NSWindowStyleMaskTitled
         | NSWindowStyleMaskClosable
         | NSWindowStyleMaskMiniaturizable;
@@ -175,6 +176,32 @@ static NSString *const kLogPath = @"/usr/bin/log";
     [buttonRow addArrangedSubview:buttonFlex];
     [buttonRow addArrangedSubview:versionLabel];
 
+    // ---- 语言行 ----
+    NSTextField *languageLabel = [self labelWithString:NSLocalizedString(@"language.label", @"")
+                                                   font:[NSFont systemFontOfSize:12]
+                                                  color:[NSColor secondaryLabelColor]
+                                                 wrapping:NO];
+    self.languagePopup = [[NSPopUpButton alloc] init];
+    [self.languagePopup addItemsWithTitles:@[@"English", @"简体中文", @"Español"]];
+    self.languagePopup.target = self;
+    self.languagePopup.action = @selector(languageChanged:);
+    [self selectLanguagePopupItem];
+
+    NSView *languageFlex = [[NSView alloc] init];
+    [languageFlex setContentHuggingPriority:1
+                             forOrientation:NSLayoutConstraintOrientationHorizontal];
+    [languageFlex setContentCompressionResistancePriority:1
+                                           forOrientation:NSLayoutConstraintOrientationHorizontal];
+
+    NSStackView *languageRow = [[NSStackView alloc] init];
+    languageRow.orientation = NSUserInterfaceLayoutOrientationHorizontal;
+    languageRow.alignment = NSLayoutAttributeCenterY;
+    languageRow.spacing = 8;
+    languageRow.distribution = NSStackViewDistributionFill;
+    [languageRow addArrangedSubview:languageLabel];
+    [languageRow addArrangedSubview:languageFlex];
+    [languageRow addArrangedSubview:self.languagePopup];
+
     // ---- 说明 ----
     NSTextField *note1 = [self labelWithString:NSLocalizedString(@"main.note1", @"")
                                           font:[NSFont systemFontOfSize:11]
@@ -190,11 +217,13 @@ static NSString *const kLogPath = @"/usr/bin/log";
     [root addArrangedSubview:separator];
     [root addArrangedSubview:self.statusLabel];
     [root addArrangedSubview:buttonRow];
+    [root addArrangedSubview:languageRow];
     [root addArrangedSubview:note1];
     [root addArrangedSubview:note2];
 
     NSArray<NSView *> *fullWidthViews = @[
-        topRow, self.subtitleLabel, separator, self.statusLabel, buttonRow, note1, note2
+        topRow, self.subtitleLabel, separator, self.statusLabel, buttonRow,
+        languageRow, note1, note2
     ];
     NSMutableArray<NSLayoutConstraint *> *constraints = [NSMutableArray array];
     for (NSView *view in fullWidthViews) {
@@ -226,6 +255,74 @@ static NSString *const kLogPath = @"/usr/bin/log";
     self.toggle.enabled = self.stateKnown && !self.busy;
     self.refreshButton.enabled = !self.busy;
     self.authReadButton.enabled = !self.stateKnown && !self.busy;
+}
+
+- (NSString *)effectiveLanguageCode {
+    NSString *pref = [[NSUserDefaults standardUserDefaults] stringForKey:@"TMBLanguage"];
+    if (pref.length > 0) {
+        return pref;
+    }
+
+    NSString *preferred = [[NSBundle mainBundle] preferredLocalizations].firstObject;
+    if ([preferred hasPrefix:@"zh"]) {
+        return @"zh-Hans";
+    }
+    if ([preferred hasPrefix:@"es"]) {
+        return @"es";
+    }
+    return @"en";
+}
+
+- (void)selectLanguagePopupItem {
+    NSString *lang = [self effectiveLanguageCode];
+    NSInteger index = [lang isEqualToString:@"zh-Hans"] ? 1
+                    : ([lang isEqualToString:@"es"] ? 2 : 0);
+    [self.languagePopup selectItemAtIndex:index];
+}
+
+- (IBAction)languageChanged:(id)sender {
+    NSInteger index = self.languagePopup.indexOfSelectedItem;
+    NSString *lang = index == 1 ? @"zh-Hans" : (index == 2 ? @"es" : @"en");
+    NSString *current = [self effectiveLanguageCode];
+    if ([lang isEqualToString:current]) {
+        return;
+    }
+
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.alertStyle = NSAlertStyleInformational;
+    alert.messageText = NSLocalizedString(@"language.restartTitle", @"");
+    alert.informativeText = NSLocalizedString(@"language.restartMessage", @"");
+    [alert addButtonWithTitle:NSLocalizedString(@"language.restartNow", @"")];
+    [alert addButtonWithTitle:NSLocalizedString(@"language.later", @"")];
+
+    if ([alert runModal] == NSAlertFirstButtonReturn) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:lang forKey:@"TMBLanguage"];
+        [defaults setObject:@[lang] forKey:@"AppleLanguages"];
+        [defaults synchronize];
+        [self relaunchApp];
+    } else {
+        [self selectLanguagePopupItem];
+    }
+}
+
+- (void)relaunchApp {
+    NSString *appPath = [[NSBundle mainBundle] bundlePath];
+    NSTask *task = [[NSTask alloc] init];
+    task.executableURL = [NSURL fileURLWithPath:@"/usr/bin/open"];
+    task.arguments = @[@"-n", appPath];
+
+    NSError *error = nil;
+    if (![task launchAndReturnError:&error]) {
+        [self updateStatus:[NSString stringWithFormat:
+            NSLocalizedString(@"status.relaunchFailed", @""),
+            error.localizedDescription ?: NSLocalizedString(@"error.unknown", @"")]
+                     error:YES];
+        [self selectLanguagePopupItem];
+        return;
+    }
+
+    [NSApp terminate:nil];
 }
 
 - (void)updateStatus:(NSString *)status error:(BOOL)isError {

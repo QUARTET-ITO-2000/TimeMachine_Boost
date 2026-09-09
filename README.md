@@ -32,7 +32,7 @@ The value is applied at runtime and returns to the default after a reboot. This 
 - Toggles through the system administrator authorization dialog, then **reads the value back** to verify the change instead of assuming success.
 - Fallback “read with administrator privileges” button when the value cannot be read directly.
 - Dedicated log window that streams Time Machine logs in real time, with clear/autoscroll support. Closing the window stops and hides it; the app keeps running.
-- Trilingual interface: English (default), 简体中文 and Español, following the system language.
+- Trilingual interface: English (default), 简体中文 and Español. Follows the system language and can also be chosen from the main window.
 - No third-party dependencies.
 
 ### Shell
@@ -61,6 +61,7 @@ open TimeMachineBoost.app
 2. Toggling opens the macOS administrator authorization dialog; after approval, the app changes the value and verifies it by reading it back.
 3. Click **Real-time logs…** to open the log window. If no backup is running there is usually no new output; run `tmutil startbackup` to trigger one.
 4. Closing the log window stops and hides it only. Open it again to start a fresh stream.
+5. Use the **Language** menu at the bottom of the window to switch the interface language (English, 简体中文, Español). The app restarts after confirmation.
 
 > In this prototype every toggle asks for administrator authorization. An “authorize once, toggle many times” flow requires a privileged LaunchDaemon helper.
 
@@ -151,6 +152,7 @@ The app verifies the result by reading the value back after each change. If the 
 
 ## Version history
 
+- **v0.5**: Added an in-window language selector (English / 简体中文 / Español).
 - **v0.4**: Trilingual UI (English default, 简体中文, Español) for the GUI and shell tools.
 - **v0.3**: Fixed the crash when closing the log window; it now stops and hides instead.
 - **v0.2**: Added the real-time Time Machine log window.

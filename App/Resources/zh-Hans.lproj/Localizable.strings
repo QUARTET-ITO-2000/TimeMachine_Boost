@@ -8,9 +8,17 @@
 "main.refresh" = "刷新状态";
 "main.privilegedRead" = "以管理员权限读取";
 "main.openLogs" = "实时日志…";
-"main.version" = "v0.4 原型";
+"main.version" = "v0.5 原型";
 "main.note1" = "加速模式会把 debug.lowpri_throttle_enabled 设为 0，仅对本次开机生效，重启后恢复系统默认。";
 "main.note2" = "切换和“以管理员权限读取”会弹出系统管理员授权框；原型阶段每次都会请求，属预期行为。";
+
+/* 语言选择 */
+"language.label" = "语言：";
+"language.restartTitle" = "重启 Time Machine Boost 以应用新的语言？";
+"language.restartMessage" = "界面语言将在 App 重启后切换。";
+"language.restartNow" = "立即重启";
+"language.later" = "稍后";
+"status.relaunchFailed" = "重启 App 失败：%@。";
 
 /* 副标题 */
 "subtitle.accelerated" = "加速模式：低优先级 I/O 节流已关闭";

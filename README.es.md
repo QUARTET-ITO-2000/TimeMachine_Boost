@@ -32,7 +32,7 @@ El valor se aplica en tiempo de ejecución y vuelve al predeterminado tras reini
 - Cambia el valor mediante el diálogo de autorización de administrador del sistema y, después, **lo verifica leyéndolo de nuevo**, en lugar de dar por hecho que funcionó.
 - Botón alternativo de “lectura con privilegios de administrador” cuando el estado no se puede leer directamente.
 - Ventana de registros dedicada que transmite los logs de Time Machine en tiempo real, con opciones de limpiar y desplazamiento automático. Cerrar la ventana solo detiene y oculta la transmisión; la app sigue abierta.
-- Interfaz trilingüe: inglés (predeterminado), 简体中文 y Español, según el idioma del sistema.
+- Interfaz trilingüe: inglés (predeterminado), 简体中文 y Español. Sigue el idioma del sistema y también se puede elegir desde la ventana principal.
 - Sin dependencias de terceros.
 
 ### Shell
@@ -61,6 +61,7 @@ open TimeMachineBoost.app
 2. Al cambiarlo se abre el diálogo de autorización de administrador; tras aprobarlo, la app modifica el valor y lo verifica leyéndolo de nuevo.
 3. Pulsa **Registros en tiempo real…** para abrir la ventana de logs. Si no hay ninguna copia en curso, normalmente no hay salida; ejecuta `tmutil startbackup` para iniciar una.
 4. Cerrar la ventana de registros solo la detiene y oculta. Ábrela de nuevo para iniciar una transmisión nueva.
+5. Usa el menú **Idioma** al final de la ventana para cambiar el idioma de la interfaz (English, 简体中文, Español). La app se reinicia después de confirmar.
 
 > En este prototipo, cada cambio solicita autorización de administrador. Para “autorizar una vez y cambiar muchas veces” se necesitaría un helper LaunchDaemon con privilegios.
 
@@ -151,6 +152,7 @@ La app verifica el resultado leyendo el valor después de cada cambio. Si la ver
 
 ## Historial de versiones
 
+- **v0.5**: selector de idioma en la ventana principal (English / 简体中文 / Español).
 - **v0.4**: interfaz trilingüe (inglés predeterminado, 简体中文, Español) en GUI y herramientas de shell.
 - **v0.3**: corregido el fallo al cerrar la ventana de registros; ahora se detiene y se oculta.
 - **v0.2**: añadida la ventana de registros de Time Machine en tiempo real.

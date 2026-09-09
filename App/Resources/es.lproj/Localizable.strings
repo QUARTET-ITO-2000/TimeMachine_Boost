@@ -8,9 +8,17 @@
 "main.refresh" = "Actualizar estado";
 "main.privilegedRead" = "Leer con privilegios de administrador";
 "main.openLogs" = "Registros en tiempo real…";
-"main.version" = "prototipo v0.4";
+"main.version" = "prototipo v0.5";
 "main.note1" = "El modo boost establece debug.lowpri_throttle_enabled en 0. Solo se aplica a la sesión actual y se restablece al reiniciar.";
 "main.note2" = "Cambiar el valor y “Leer con privilegios de administrador” solicitan autorización de administrador del sistema. En este prototipo, cada solicitud es el comportamiento esperado.";
+
+/* Selección de idioma */
+"language.label" = "Idioma:";
+"language.restartTitle" = "¿Reiniciar Time Machine Boost para aplicar el nuevo idioma?";
+"language.restartMessage" = "El idioma de la interfaz cambiará después de reiniciar la app.";
+"language.restartNow" = "Reiniciar ahora";
+"language.later" = "Más tarde";
+"status.relaunchFailed" = "No se pudo reiniciar la app: %@.";
 
 /* Subtítulos */
 "subtitle.accelerated" = "Modo boost: la limitación de I/O de baja prioridad está desactivada";
