@@ -32,12 +32,14 @@ El valor se aplica en tiempo de ejecución y vuelve al predeterminado tras reini
 - Cambia el valor mediante el diálogo de autorización de administrador del sistema y, después, **lo verifica leyéndolo de nuevo**, en lugar de dar por hecho que funcionó.
 - Botón alternativo de “lectura con privilegios de administrador” cuando el estado no se puede leer directamente.
 - Ventana de registros dedicada que transmite los logs de Time Machine en tiempo real, con opciones de limpiar y desplazamiento automático. Cerrar la ventana solo detiene y oculta la transmisión; la app sigue abierta.
+- Interfaz trilingüe: inglés (predeterminado), 简体中文 y Español, según el idioma del sistema.
 - Sin dependencias de terceros.
 
 ### Shell
 
 - CLI parametrizada: `--status`, `--on`, `--off`, `--toggle`.
 - TUI interactiva en shell puro con actualización de estado, gestión de credenciales de sudo y visor de registros en vivo.
+- Selección de idioma con `--lang en|zh|es`, `TIME_MACHINE_BOOST_LANG` o variables de locale (respaldo en inglés).
 - Usa el mismo parámetro del kernel y el mismo comportamiento que la GUI.
 
 ## Requisitos
@@ -45,6 +47,7 @@ El valor se aplica en tiempo de ejecución y vuelve al predeterminado tras reini
 - macOS 13 o posterior (la GUI se desarrolló y verificó en macOS 26 / arm64)
 - Una cuenta de administrador (necesaria al cambiar el valor)
 - AppKit para la GUI; sin dependencias de terceros
+- Idiomas de la interfaz: English, 简体中文, Español
 
 ## Uso
 
@@ -71,7 +74,11 @@ chmod +x boost_time_machine_tui.sh
 ./boost_time_machine_tui.sh --off        # restaura el valor predeterminado (1)
 ./boost_time_machine_tui.sh --toggle     # cambia directamente
 ./boost_time_machine_tui.sh --help
+./boost_time_machine_tui.sh --lang es    # se ejecuta en español
+TIME_MACHINE_BOOST_LANG=zh ./boost_time_machine_tui.sh --status
 ```
+
+Precedencia del idioma: `--lang` > `TIME_MACHINE_BOOST_LANG` > `LC_ALL`/`LC_MESSAGES`/`LANG` > inglés.
 
 Atajos de la TUI:
 
@@ -112,7 +119,11 @@ TimeMachineBoost/
 ├── App/                      # GUI nativa
 │   ├── main.m                # programa principal en AppKit (interruptor + ventana de logs)
 │   ├── Info.plist
-│   └── build.sh
+│   ├── build.sh
+│   └── Resources/            # Localizable.strings
+│       ├── en.lproj
+│       ├── zh-Hans.lproj
+│       └── es.lproj
 └── boost_time_machine_tui.sh # TUI/CLI en shell puro
 ```
 
@@ -128,7 +139,7 @@ TimeMachineBoost/
 
 ### ¿Cerrar la ventana de registros cierra la app o provoca un fallo?
 
-No. Desde la v0.3, la ventana de registros se detiene y se oculta en lugar de destruirse, evitando el fallo por liberación durante la animación de cierre. Si aun así la app se cierra de forma inesperada, adjunta el informe de fallo.
+No. Desde la v0.3, la ventana de registros se detiene y se oculta en lugar de destruirse, evitando el fallo por liberación durante la animación de cierre. La v0.4 añade la interfaz trilingüe. Si aun así la app se cierra de forma inesperada, adjunta el informe de fallo.
 
 ### ¿Por qué no hay una opción de “activar automáticamente al iniciar”?
 
@@ -137,6 +148,13 @@ Es una omisión deliberada. Ese parámetro protege la capacidad de respuesta del
 ### ¿El cambio se aplicó pero el estado no cambió?
 
 La app verifica el resultado leyendo el valor después de cada cambio. Si la verificación falla, muestra “el comando se ejecutó pero la verificación no devolvió el valor esperado”, en lugar de fingir que todo funcionó. Confirma que tu versión de macOS todavía admite este parámetro.
+
+## Historial de versiones
+
+- **v0.4**: interfaz trilingüe (inglés predeterminado, 简体中文, Español) en GUI y herramientas de shell.
+- **v0.3**: corregido el fallo al cerrar la ventana de registros; ahora se detiene y se oculta.
+- **v0.2**: añadida la ventana de registros de Time Machine en tiempo real.
+- **v0.1**: prototipo inicial del interruptor GUI.
 
 ## Licencia
 

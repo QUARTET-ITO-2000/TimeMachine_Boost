@@ -1,0 +1,50 @@
+/* Application menu */
+"menu.about" = "About Time Machine Boost";
+"menu.quit" = "Quit Time Machine Boost";
+
+/* Main window */
+"main.title" = "Time Machine Backup Boost";
+"main.reading" = "Reading current state…";
+"main.refresh" = "Refresh State";
+"main.privilegedRead" = "Read with Administrator Privileges";
+"main.openLogs" = "Real-time Logs…";
+"main.version" = "v0.4 prototype";
+"main.note1" = "Boost mode sets debug.lowpri_throttle_enabled to 0. It only applies to the current session and resets after reboot.";
+"main.note2" = "Toggling and “Read with Administrator Privileges” request system administrator authorization. In this prototype, every request is expected.";
+
+/* Subtitles */
+"subtitle.accelerated" = "Boost mode: low-priority I/O throttling is disabled";
+"subtitle.default" = "System default: low-priority I/O throttling is enabled";
+
+/* Status messages */
+"status.reading" = "Reading current state…";
+"status.current" = "Current %@ = %@";
+"status.readFailed" = "Unable to read the current state directly (possibly running in a restricted environment).";
+"status.readingPrivileged" = "Requesting administrator privileges to read state…";
+"status.privilegedReadDone" = "Read: %@ = %@";
+"status.privilegedReadFailed" = "Privileged read failed (exit code %d).";
+"status.applying" = "Requesting administrator privileges and applying…";
+"status.toggleDone.accelerated" = "Switched to boost mode and verified: %@ = %@";
+"status.toggleDone.default" = "Restored system default and verified: %@ = %@";
+"status.toggleFailed" = "Authorization or execution failed (exit code %d); nothing was changed.";
+
+/* Authorization */
+"auth.cancelledShort" = "Authorization cancelled.";
+"auth.cancelled" = "Authorization cancelled; nothing was changed.";
+
+/* Log window */
+"log.windowTitle" = "Real-time Time Machine Logs";
+"log.preparing" = "Preparing to listen…";
+"log.clear" = "Clear";
+"log.stopAndHide" = "Stop and Hide";
+"log.hiddenStatus" = "Stopped and hidden; reopen it from the main window anytime.";
+"log.streamStarted" = "— Start listening to Time Machine logs —";
+"log.streamingStatus" = "Listening in real time to subsystem com.apple.TimeMachine logs… (usually no output while no backup is running)";
+"log.startFailedLine" = "Unable to start log stream: %@";
+"log.startFailedStatus" = "Failed to start log stream.";
+"log.streamEnded" = "— Log stream ended —";
+"log.streamEndedStatus" = "Log stream ended; close or reopen the window.";
+
+/* Errors */
+"error.cannotLaunchProcess" = "Unable to launch process";
+"error.unknown" = "Unknown error";

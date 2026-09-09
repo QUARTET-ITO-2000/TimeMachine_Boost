@@ -1,0 +1,50 @@
+/* Menú de la aplicación */
+"menu.about" = "Acerca de Time Machine Boost";
+"menu.quit" = "Salir de Time Machine Boost";
+
+/* Ventana principal */
+"main.title" = "Aceleración de copias de Time Machine";
+"main.reading" = "Leyendo el estado actual…";
+"main.refresh" = "Actualizar estado";
+"main.privilegedRead" = "Leer con privilegios de administrador";
+"main.openLogs" = "Registros en tiempo real…";
+"main.version" = "prototipo v0.4";
+"main.note1" = "El modo boost establece debug.lowpri_throttle_enabled en 0. Solo se aplica a la sesión actual y se restablece al reiniciar.";
+"main.note2" = "Cambiar el valor y “Leer con privilegios de administrador” solicitan autorización de administrador del sistema. En este prototipo, cada solicitud es el comportamiento esperado.";
+
+/* Subtítulos */
+"subtitle.accelerated" = "Modo boost: la limitación de I/O de baja prioridad está desactivada";
+"subtitle.default" = "Valor predeterminado del sistema: la limitación de I/O de baja prioridad está activada";
+
+/* Mensajes de estado */
+"status.reading" = "Leyendo el estado actual…";
+"status.current" = "Actual %@ = %@";
+"status.readFailed" = "No se pudo leer el estado directamente (posiblemente se esté ejecutando en un entorno restringido).";
+"status.readingPrivileged" = "Solicitando privilegios de administrador para leer el estado…";
+"status.privilegedReadDone" = "Leído: %@ = %@";
+"status.privilegedReadFailed" = "No se pudo leer con privilegios (código de salida %d).";
+"status.applying" = "Solicitando privilegios de administrador y aplicando…";
+"status.toggleDone.accelerated" = "Cambiado al modo boost y verificado: %@ = %@";
+"status.toggleDone.default" = "Restaurado el valor predeterminado y verificado: %@ = %@";
+"status.toggleFailed" = "Falló la autorización o la ejecución (código de salida %d); no se realizó ningún cambio.";
+
+/* Autorización */
+"auth.cancelledShort" = "Autorización cancelada.";
+"auth.cancelled" = "Autorización cancelada; no se realizó ningún cambio.";
+
+/* Ventana de registros */
+"log.windowTitle" = "Registros de Time Machine en tiempo real";
+"log.preparing" = "Preparando la escucha…";
+"log.clear" = "Limpiar";
+"log.stopAndHide" = "Detener y ocultar";
+"log.hiddenStatus" = "Detenido y oculto; puedes volver a abrirlo desde la ventana principal cuando quieras.";
+"log.streamStarted" = "— Iniciando la escucha de registros de Time Machine —";
+"log.streamingStatus" = "Escuchando en tiempo real los registros de subsystem com.apple.TimeMachine… (normalmente no hay salida mientras no haya una copia en curso)";
+"log.startFailedLine" = "No se pudo iniciar la transmisión de registros: %@";
+"log.startFailedStatus" = "No se pudo iniciar la transmisión de registros.";
+"log.streamEnded" = "— Transmisión de registros finalizada —";
+"log.streamEndedStatus" = "La transmisión finalizó; cierra o vuelve a abrir la ventana.";
+
+/* Errores */
+"error.cannotLaunchProcess" = "No se pudo iniciar el proceso";
+"error.unknown" = "Error desconocido";

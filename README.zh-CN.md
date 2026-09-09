@@ -32,12 +32,14 @@ macOS 通过内核参数暴露这个节流开关：
 - 通过系统管理员授权框切换，并在同一轮授权内“设置 + 回读验证”，不会假装成功；
 - 直接读取受限时，可用“以管理员权限读取”兜底；
 - 独立日志窗口实时展示 Time Machine 日志，支持清空与自动滚动；关闭窗口只会停止并隐藏，App 不退出；
+- 界面支持英语（默认）、简体中文和西班牙语，跟随系统语言；
 - 无第三方依赖。
 
 ### Shell
 
 - 参数化 CLI：`--status`、`--on`、`--off`、`--toggle`；
 - 交互式纯 Shell TUI：状态刷新、sudo 凭据管理、实时日志；
+- 通过 `--lang en|zh|es`、`TIME_MACHINE_BOOST_LANG` 或系统区域设置切换语言（兜底英语）；
 - 与 GUI 使用同一内核参数，行为一致。
 
 ## 系统要求
@@ -45,6 +47,7 @@ macOS 通过内核参数暴露这个节流开关：
 - macOS 13 或更高（GUI 在 macOS 26 / arm64 上开发验证）
 - 管理员账户（切换时需要授权）
 - GUI 依赖 AppKit；无第三方依赖
+- 界面语言：英语、简体中文、西班牙语
 
 ## 使用方法
 
@@ -71,7 +74,11 @@ chmod +x boost_time_machine_tui.sh
 ./boost_time_machine_tui.sh --off        # 恢复系统默认（= 1）
 ./boost_time_machine_tui.sh --toggle     # 直接切换
 ./boost_time_machine_tui.sh --help
+./boost_time_machine_tui.sh --lang es    # 以西班牙语运行
+TIME_MACHINE_BOOST_LANG=zh ./boost_time_machine_tui.sh --status
 ```
+
+语言优先级：`--lang` > `TIME_MACHINE_BOOST_LANG` > `LC_ALL`/`LC_MESSAGES`/`LANG` > 英语。
 
 TUI 快捷键：
 
@@ -112,7 +119,11 @@ TimeMachineBoost/
 ├── App/                      # 原生 GUI
 │   ├── main.m                # AppKit 主程序（开关 + 日志窗口）
 │   ├── Info.plist
-│   └── build.sh
+│   ├── build.sh
+│   └── Resources/            # Localizable.strings
+│       ├── en.lproj
+│       ├── zh-Hans.lproj
+│       └── es.lproj
 └── boost_time_machine_tui.sh # 纯 Shell TUI/CLI
 ```
 
@@ -128,7 +139,7 @@ TimeMachineBoost/
 
 ### 关闭日志窗口会导致程序退出/崩溃？
 
-不会。v0.3 起日志窗口关闭时只“停止并隐藏”，不再销毁窗口，避免关闭动画期间释放导致的崩溃。若仍异常退出，请附上崩溃报告。
+不会。v0.3 起日志窗口关闭时只“停止并隐藏”，不再销毁窗口，避免关闭动画期间释放导致的崩溃。v0.4 加入了三语界面。若仍异常退出，请附上崩溃报告。
 
 ### 为什么没有“开机自动加速”选项？
 
@@ -137,6 +148,13 @@ TimeMachineBoost/
 ### 切换成功但状态没有变化？
 
 工具每次修改后都会回读验证。若回读失败，界面会提示“命令已执行但验证未返回目标值”，不会假装成功。请确认你的 macOS 版本仍支持该参数。
+
+## 版本记录
+
+- **v0.4**：GUI 与 Shell 工具支持三语界面（英语默认、简体中文、西班牙语）。
+- **v0.3**：修复关闭日志窗口导致的崩溃；改为停止并隐藏。
+- **v0.2**：新增实时 Time Machine 日志窗口。
+- **v0.1**：GUI 开关原型。
 
 ## 许可证
 

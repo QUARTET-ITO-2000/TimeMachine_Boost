@@ -1,0 +1,50 @@
+/* 应用程序菜单 */
+"menu.about" = "关于 Time Machine Boost";
+"menu.quit" = "退出 Time Machine Boost";
+
+/* 主窗口 */
+"main.title" = "Time Machine 备份加速";
+"main.reading" = "正在读取当前状态…";
+"main.refresh" = "刷新状态";
+"main.privilegedRead" = "以管理员权限读取";
+"main.openLogs" = "实时日志…";
+"main.version" = "v0.4 原型";
+"main.note1" = "加速模式会把 debug.lowpri_throttle_enabled 设为 0，仅对本次开机生效，重启后恢复系统默认。";
+"main.note2" = "切换和“以管理员权限读取”会弹出系统管理员授权框；原型阶段每次都会请求，属预期行为。";
+
+/* 副标题 */
+"subtitle.accelerated" = "加速模式：低优先级 I/O 节流已关闭";
+"subtitle.default" = "系统默认：低优先级 I/O 节流已开启";
+
+/* 状态消息 */
+"status.reading" = "正在读取当前状态…";
+"status.current" = "当前 %@ = %@";
+"status.readFailed" = "无法直接读取当前状态（可能运行在受限环境）。";
+"status.readingPrivileged" = "正在请求管理员权限读取状态…";
+"status.privilegedReadDone" = "已读取：%@ = %@";
+"status.privilegedReadFailed" = "授权读取失败（退出码 %d）。";
+"status.applying" = "正在请求管理员权限并切换…";
+"status.toggleDone.accelerated" = "已切换到加速模式并回读验证：%@ = %@";
+"status.toggleDone.default" = "已恢复系统默认并回读验证：%@ = %@";
+"status.toggleFailed" = "授权或执行失败（退出码 %d），没有修改任何设置。";
+
+/* 授权 */
+"auth.cancelledShort" = "授权已取消。";
+"auth.cancelled" = "授权已取消，没有修改任何设置。";
+
+/* 日志窗口 */
+"log.windowTitle" = "实时 Time Machine 日志";
+"log.preparing" = "准备开始监听…";
+"log.clear" = "清空";
+"log.stopAndHide" = "停止并隐藏";
+"log.hiddenStatus" = "已停止，窗口已隐藏；可随时从主窗口重新打开。";
+"log.streamStarted" = "—— 开始监听 Time Machine 日志 ——";
+"log.streamingStatus" = "正在实时监听 subsystem = com.apple.TimeMachine 的日志…（无备份活动时通常没有新输出）";
+"log.startFailedLine" = "无法启动日志流：%@";
+"log.startFailedStatus" = "启动日志流失败。";
+"log.streamEnded" = "—— 日志流已结束 ——";
+"log.streamEndedStatus" = "日志流已结束，可关闭窗口或重新打开。";
+
+/* 错误 */
+"error.cannotLaunchProcess" = "无法启动进程";
+"error.unknown" = "未知错误";

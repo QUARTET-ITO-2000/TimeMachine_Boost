@@ -32,12 +32,14 @@ The value is applied at runtime and returns to the default after a reboot. This 
 - Toggles through the system administrator authorization dialog, then **reads the value back** to verify the change instead of assuming success.
 - Fallback “read with administrator privileges” button when the value cannot be read directly.
 - Dedicated log window that streams Time Machine logs in real time, with clear/autoscroll support. Closing the window stops and hides it; the app keeps running.
+- Trilingual interface: English (default), 简体中文 and Español, following the system language.
 - No third-party dependencies.
 
 ### Shell
 
 - Parameterized CLI: `--status`, `--on`, `--off`, `--toggle`.
 - Interactive pure-shell TUI with state refresh, sudo credential management and a live log viewer.
+- Language selection through `--lang en|zh|es`, `TIME_MACHINE_BOOST_LANG`, or locale variables (English fallback).
 - Same kernel parameter and behavior as the GUI.
 
 ## Requirements
@@ -45,6 +47,7 @@ The value is applied at runtime and returns to the default after a reboot. This 
 - macOS 13 or later (GUI developed and verified on macOS 26 / arm64)
 - An administrator account (required when toggling)
 - AppKit for the GUI; no third-party dependencies
+- Interface languages: English, 简体中文, Español
 
 ## Usage
 
@@ -71,7 +74,11 @@ chmod +x boost_time_machine_tui.sh
 ./boost_time_machine_tui.sh --off        # restore default (value 1)
 ./boost_time_machine_tui.sh --toggle     # toggle directly
 ./boost_time_machine_tui.sh --help
+./boost_time_machine_tui.sh --lang es    # run in Spanish
+TIME_MACHINE_BOOST_LANG=zh ./boost_time_machine_tui.sh --status
 ```
+
+Language precedence: `--lang` > `TIME_MACHINE_BOOST_LANG` > `LC_ALL`/`LC_MESSAGES`/`LANG` > English.
 
 TUI shortcuts:
 
@@ -112,7 +119,11 @@ TimeMachineBoost/
 ├── App/                      # native GUI
 │   ├── main.m                # AppKit main program (switch + log window)
 │   ├── Info.plist
-│   └── build.sh
+│   ├── build.sh
+│   └── Resources/            # Localizable.strings
+│       ├── en.lproj
+│       ├── zh-Hans.lproj
+│       └── es.lproj
 └── boost_time_machine_tui.sh # pure-shell TUI/CLI
 ```
 
@@ -128,7 +139,7 @@ TimeMachineBoost/
 
 ### Closing the log window quits the app / crashes?
 
-No. Since v0.3 the log window is stopped and hidden instead of being destroyed, avoiding a release-during-close-animation crash. If you still see an unexpected exit, please attach the crash report.
+No. Since v0.3 the log window is stopped and hidden instead of being destroyed, avoiding a release-during-close-animation crash. v0.4 adds the trilingual interface. If you still see an unexpected exit, please attach the crash report.
 
 ### Why is there no “auto-enable after boot” option?
 
@@ -137,6 +148,13 @@ Deliberately omitted. That kernel parameter protects system responsiveness durin
 ### The toggle succeeded but the state did not change?
 
 The app verifies the result by reading the value back after each change. If the readback fails, it reports “command executed but verification did not return the target value” instead of pretending the operation succeeded. Please confirm your macOS version still supports this parameter.
+
+## Version history
+
+- **v0.4**: Trilingual UI (English default, 简体中文, Español) for the GUI and shell tools.
+- **v0.3**: Fixed the crash when closing the log window; it now stops and hides instead.
+- **v0.2**: Added the real-time Time Machine log window.
+- **v0.1**: Initial GUI switch prototype.
 
 ## License
 

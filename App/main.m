@@ -46,11 +46,11 @@ static NSString *const kLogPath = @"/usr/bin/log";
     [menubar addItem:appMenuItem];
 
     NSMenu *appMenu = [[NSMenu alloc] init];
-    [appMenu addItemWithTitle:@"关于 Time Machine Boost"
+    [appMenu addItemWithTitle:NSLocalizedString(@"menu.about", @"")
                        action:@selector(orderFrontStandardAboutPanel:)
                 keyEquivalent:@""];
     [appMenu addItem:[NSMenuItem separatorItem]];
-    [appMenu addItemWithTitle:@"退出 Time Machine Boost"
+    [appMenu addItemWithTitle:NSLocalizedString(@"menu.quit", @"")
                        action:@selector(terminate:)
                 keyEquivalent:@"q"];
     appMenuItem.submenu = appMenu;
@@ -102,7 +102,7 @@ static NSString *const kLogPath = @"/usr/bin/log";
     ]];
 
     // ---- 标题行：标题 + 弹性空白 + 开关 ----
-    NSTextField *titleLabel = [self labelWithString:@"Time Machine 备份加速"
+    NSTextField *titleLabel = [self labelWithString:NSLocalizedString(@"main.title", @"")
                                                font:[NSFont systemFontOfSize:16 weight:NSFontWeightSemibold]
                                               color:[NSColor labelColor]
                                              wrapping:NO];
@@ -128,7 +128,7 @@ static NSString *const kLogPath = @"/usr/bin/log";
     [topRow addArrangedSubview:toggle];
 
     // ---- 副标题 ----
-    self.subtitleLabel = [self labelWithString:@"正在读取当前状态…"
+    self.subtitleLabel = [self labelWithString:NSLocalizedString(@"main.reading", @"")
                                           font:[NSFont systemFontOfSize:12]
                                          color:[NSColor secondaryLabelColor]
                                         wrapping:YES];
@@ -144,17 +144,17 @@ static NSString *const kLogPath = @"/usr/bin/log";
     separator.layer.backgroundColor = [NSColor separatorColor].CGColor;
 
     // ---- 按钮行 ----
-    self.refreshButton = [NSButton buttonWithTitle:@"刷新状态"
+    self.refreshButton = [NSButton buttonWithTitle:NSLocalizedString(@"main.refresh", @"")
                                             target:self
                                             action:@selector(refreshState:)];
-    self.authReadButton = [NSButton buttonWithTitle:@"以管理员权限读取"
+    self.authReadButton = [NSButton buttonWithTitle:NSLocalizedString(@"main.privilegedRead", @"")
                                              target:self
                                              action:@selector(privilegedRefreshState:)];
-    NSButton *logButton = [NSButton buttonWithTitle:@"实时日志…"
+    NSButton *logButton = [NSButton buttonWithTitle:NSLocalizedString(@"main.openLogs", @"")
                                              target:self
                                              action:@selector(openLogWindow:)];
 
-    NSTextField *versionLabel = [self labelWithString:@"v0.3 原型"
+    NSTextField *versionLabel = [self labelWithString:NSLocalizedString(@"main.version", @"")
                                                  font:[NSFont systemFontOfSize:11]
                                                 color:[NSColor tertiaryLabelColor]
                                                wrapping:NO];
@@ -176,13 +176,11 @@ static NSString *const kLogPath = @"/usr/bin/log";
     [buttonRow addArrangedSubview:versionLabel];
 
     // ---- 说明 ----
-    NSTextField *note1 = [self labelWithString:
-        @"加速模式会把 debug.lowpri_throttle_enabled 设为 0，仅对本次开机生效，重启后恢复系统默认。"
+    NSTextField *note1 = [self labelWithString:NSLocalizedString(@"main.note1", @"")
                                           font:[NSFont systemFontOfSize:11]
                                          color:[NSColor secondaryLabelColor]
                                         wrapping:YES];
-    NSTextField *note2 = [self labelWithString:
-        @"切换和“以管理员权限读取”会弹出系统管理员授权框；原型阶段每次都会请求，属预期行为。"
+    NSTextField *note2 = [self labelWithString:NSLocalizedString(@"main.note2", @"")
                                           font:[NSFont systemFontOfSize:11]
                                          color:[NSColor secondaryLabelColor]
                                         wrapping:YES];
@@ -217,7 +215,7 @@ static NSString *const kLogPath = @"/usr/bin/log";
     if (sender == self.logWindow) {
         // 日志窗口只隐藏不销毁：停止任务后复用，避免在关闭动画中释放窗口导致崩溃。
         [self stopLogTask];
-        [self updateStatusLog:@"已停止，窗口已隐藏；可随时从主窗口重新打开。"];
+        [self updateStatusLog:NSLocalizedString(@"log.hiddenStatus", @"")];
         [sender orderOut:nil];
         return NO;
     }
@@ -239,9 +237,9 @@ static NSString *const kLogPath = @"/usr/bin/log";
 
 - (void)setSubtitleForValue:(NSString *)value {
     if ([value isEqualToString:@"0"]) {
-        self.subtitleLabel.stringValue = @"加速模式：低优先级 I/O 节流已关闭";
+        self.subtitleLabel.stringValue = NSLocalizedString(@"subtitle.accelerated", @"");
     } else {
-        self.subtitleLabel.stringValue = @"系统默认：低优先级 I/O 节流已开启";
+        self.subtitleLabel.stringValue = NSLocalizedString(@"subtitle.default", @"");
     }
 }
 
@@ -262,7 +260,7 @@ static NSString *const kLogPath = @"/usr/bin/log";
         if (outStatus) {
             *outStatus = 1;
         }
-        return error.localizedDescription ?: @"无法启动进程";
+        return error.localizedDescription ?: NSLocalizedString(@"error.cannotLaunchProcess", @"");
     }
 
     [task waitUntilExit];
@@ -302,7 +300,7 @@ static NSString *const kLogPath = @"/usr/bin/log";
     }
     self.busy = YES;
     [self updateControlStates];
-    [self updateStatus:@"正在读取当前状态…" error:NO];
+    [self updateStatus:NSLocalizedString(@"status.reading", @"") error:NO];
 
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         NSString *value = [self readSysctlValue];
@@ -316,11 +314,11 @@ static NSString *const kLogPath = @"/usr/bin/log";
                     : NSControlStateValueOff;
                 [self setSubtitleForValue:value];
                 [self updateStatus:[NSString stringWithFormat:
-                    @"当前 %@ = %@", kSysctlKey, value]
+                    NSLocalizedString(@"status.current", @""), kSysctlKey, value]
                              error:NO];
             } else {
                 self.stateKnown = NO;
-                [self updateStatus:@"无法直接读取当前状态（可能运行在受限环境）。"
+                [self updateStatus:NSLocalizedString(@"status.readFailed", @"")
                              error:YES];
                 [self updateControlStates];
             }
@@ -334,7 +332,7 @@ static NSString *const kLogPath = @"/usr/bin/log";
     }
     self.busy = YES;
     [self updateControlStates];
-    [self updateStatus:@"正在请求管理员权限读取状态…" error:NO];
+    [self updateStatus:NSLocalizedString(@"status.readingPrivileged", @"") error:NO];
 
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         int status = 0;
@@ -350,14 +348,15 @@ static NSString *const kLogPath = @"/usr/bin/log";
                     : NSControlStateValueOff;
                 [self setSubtitleForValue:output];
                 [self updateStatus:[NSString stringWithFormat:
-                    @"已读取：%@ = %@", kSysctlKey, output]
+                    NSLocalizedString(@"status.privilegedReadDone", @""), kSysctlKey, output]
                              error:NO];
             } else {
                 self.stateKnown = NO;
                 BOOL cancelled = [output containsString:@"-128"];
                 [self updateStatus:cancelled
-                    ? @"授权已取消。"
-                    : [NSString stringWithFormat:@"授权读取失败（退出码 %d）。", status]
+                    ? NSLocalizedString(@"auth.cancelledShort", @"")
+                    : [NSString stringWithFormat:
+                        NSLocalizedString(@"status.privilegedReadFailed", @""), status]
                              error:YES];
                 [self updateControlStates];
             }
@@ -377,7 +376,7 @@ static NSString *const kLogPath = @"/usr/bin/log";
     NSString *target = accelerate ? @"0" : @"1";
     self.busy = YES;
     [self updateControlStates];
-    [self updateStatus:@"正在请求管理员权限并切换…" error:NO];
+    [self updateStatus:NSLocalizedString(@"status.applying", @"") error:NO];
 
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         int status = 0;
@@ -396,14 +395,15 @@ static NSString *const kLogPath = @"/usr/bin/log";
                     ? NSControlStateValueOn
                     : NSControlStateValueOff;
                 [self setSubtitleForValue:output];
-                [self updateStatus:[NSString stringWithFormat:
-                    @"已切换并回读验证：%@ = %@", kSysctlKey, output]
+                [self updateStatus:[NSString stringWithFormat:NSLocalizedString(
+                    accelerate ? @"status.toggleDone.accelerated" : @"status.toggleDone.default",
+                    @""), kSysctlKey, output]
                              error:NO];
             } else if (status != 0 && [output containsString:@"-128"]) {
-                [self updateStatus:@"授权已取消，没有修改任何设置。" error:YES];
+                [self updateStatus:NSLocalizedString(@"auth.cancelled", @"") error:YES];
             } else {
                 [self updateStatus:[NSString stringWithFormat:
-                    @"授权或执行失败（退出码 %d），没有修改任何设置。", status]
+                    NSLocalizedString(@"status.toggleFailed", @""), status]
                              error:YES];
             }
         });
@@ -426,7 +426,7 @@ static NSString *const kLogPath = @"/usr/bin/log";
                                                    styleMask:style
                                                      backing:NSBackingStoreBuffered
                                                        defer:NO];
-    window.title = @"实时 Time Machine 日志";
+    window.title = NSLocalizedString(@"log.windowTitle", @"");
     window.delegate = self;
     window.releasedWhenClosed = NO;
     window.contentMinSize = NSMakeSize(480, 320);
@@ -449,7 +449,7 @@ static NSString *const kLogPath = @"/usr/bin/log";
         [root.bottomAnchor constraintEqualToAnchor:content.bottomAnchor constant:-12]
     ]];
 
-    self.logStatusLabel = [self labelWithString:@"准备开始监听…"
+    self.logStatusLabel = [self labelWithString:NSLocalizedString(@"log.preparing", @"")
                                            font:[NSFont systemFontOfSize:12]
                                           color:[NSColor secondaryLabelColor]
                                          wrapping:YES];
@@ -472,10 +472,10 @@ static NSString *const kLogPath = @"/usr/bin/log";
     scrollView.documentView = textView;
     self.logTextView = textView;
 
-    NSButton *clearButton = [NSButton buttonWithTitle:@"清空"
+    NSButton *clearButton = [NSButton buttonWithTitle:NSLocalizedString(@"log.clear", @"")
                                                target:self
                                                action:@selector(clearLog:)];
-    NSButton *closeButton = [NSButton buttonWithTitle:@"停止并隐藏"
+    NSButton *closeButton = [NSButton buttonWithTitle:NSLocalizedString(@"log.stopAndHide", @"")
                                                target:self
                                                action:@selector(closeLogWindow:)];
 
@@ -514,9 +514,9 @@ static NSString *const kLogPath = @"/usr/bin/log";
     [self stopLogTask];
 
     [self clearLog:nil];
-    [self appendLogText:@"—— 开始监听 Time Machine 日志 ——\n"];
-    [self updateStatusLog:
-        @"正在实时监听 subsystem = com.apple.TimeMachine 的日志…（无备份活动时通常没有新输出）"];
+    [self appendLogText:[NSString stringWithFormat:@"%@\n",
+        NSLocalizedString(@"log.streamStarted", @"")]];
+    [self updateStatusLog:NSLocalizedString(@"log.streamingStatus", @"")];
 
     NSTask *task = [[NSTask alloc] init];
     task.executableURL = [NSURL fileURLWithPath:kLogPath];
@@ -552,8 +552,10 @@ static NSString *const kLogPath = @"/usr/bin/log";
     NSError *error = nil;
     if (![task launchAndReturnError:&error]) {
         [self appendLogText:[NSString stringWithFormat:
-            @"\n无法启动日志流：%@\n", error.localizedDescription ?: @"未知错误"]];
-        [self updateStatusLog:@"启动日志流失败。"];
+            @"\n%@\n",
+            [NSString stringWithFormat:NSLocalizedString(@"log.startFailedLine", @""),
+                error.localizedDescription ?: NSLocalizedString(@"error.unknown", @"")]]];
+        [self updateStatusLog:NSLocalizedString(@"log.startFailedStatus", @"")];
         return;
     }
 
@@ -562,8 +564,9 @@ static NSString *const kLogPath = @"/usr/bin/log";
         dispatch_async(dispatch_get_main_queue(), ^{
             if (weakSelf.logTask == endedTask) {
                 weakSelf.logTask = nil;
-                [weakSelf appendLogText:@"\n—— 日志流已结束 ——\n"];
-                [weakSelf updateStatusLog:@"日志流已结束，可关闭窗口或重新打开。"];
+                [weakSelf appendLogText:[NSString stringWithFormat:@"\n%@\n",
+                    NSLocalizedString(@"log.streamEnded", @"")]];
+                [weakSelf updateStatusLog:NSLocalizedString(@"log.streamEndedStatus", @"")];
             }
         });
     };
