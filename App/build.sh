@@ -24,6 +24,7 @@ cp "$SCRIPT_DIR/Info.plist" "$APP/Contents/Info.plist"
 cp "$SCRIPT_DIR/Resources/en.lproj/Localizable.strings" "$APP/Contents/Resources/en.lproj/Localizable.strings"
 cp "$SCRIPT_DIR/Resources/zh-Hans.lproj/Localizable.strings" "$APP/Contents/Resources/zh-Hans.lproj/Localizable.strings"
 cp "$SCRIPT_DIR/Resources/es.lproj/Localizable.strings" "$APP/Contents/Resources/es.lproj/Localizable.strings"
+cp "$SCRIPT_DIR/Resources/TimeMachineBoost.icns" "$APP/Contents/Resources/TimeMachineBoost.icns"
 
 plutil -lint "$APP/Contents/Info.plist"
 codesign --force --sign - "$APP"

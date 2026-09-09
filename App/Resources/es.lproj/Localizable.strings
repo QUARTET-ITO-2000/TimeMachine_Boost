@@ -8,7 +8,7 @@
 "main.refresh" = "Actualizar estado";
 "main.privilegedRead" = "Leer con privilegios de administrador";
 "main.openLogs" = "Registros en tiempo real…";
-"main.version" = "prototipo v0.5.1";
+"main.version" = "prototipo v0.5.2";
 "main.note1" = "El modo boost establece debug.lowpri_throttle_enabled en 0. Solo se aplica a la sesión actual y se restablece al reiniciar.";
 "main.note2" = "Cambiar el valor y “Leer con privilegios de administrador” solicitan autorización de administrador del sistema. En este prototipo, cada solicitud es el comportamiento esperado.";
 

@@ -8,7 +8,7 @@
 "main.refresh" = "刷新状态";
 "main.privilegedRead" = "以管理员权限读取";
 "main.openLogs" = "实时日志…";
-"main.version" = "v0.5.1 原型";
+"main.version" = "v0.5.2 原型";
 "main.note1" = "加速模式会把 debug.lowpri_throttle_enabled 设为 0，仅对本次开机生效，重启后恢复系统默认。";
 "main.note2" = "切换和“以管理员权限读取”会弹出系统管理员授权框；原型阶段每次都会请求，属预期行为。";
 
