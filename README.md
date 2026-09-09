@@ -128,6 +128,17 @@ TimeMachineBoost/
 └── boost_time_machine_tui.sh # pure-shell TUI/CLI
 ```
 
+## Code signing & distribution
+
+- Release binaries are **ad-hoc signed only**. This project is **not** enrolled in the Apple Developer Program.
+- The GUI is not Developer ID signed or notarized, so macOS may warn that the developer cannot be verified after downloading it.
+- To open after download: Control-click the app and choose **Open**, or remove the quarantine attribute in Terminal:
+  ```sh
+  xattr -dr com.apple.quarantine /Applications/TimeMachineBoost.app
+  ```
+- If you intend to distribute the app publicly, you will need an Apple Developer account, a Developer ID Application certificate and notarization. Until then, treat release builds as personal/testing builds.
+- The shell TUI/CLI does not require code signing.
+
 ## Permissions
 
 | Action | What is needed |

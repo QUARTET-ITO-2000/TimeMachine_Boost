@@ -128,6 +128,17 @@ TimeMachineBoost/
 └── boost_time_machine_tui.sh # 纯 Shell TUI/CLI
 ```
 
+## 代码签名与分发说明
+
+- 发布包仅做了 **ad-hoc 签名**，本项目**未加入 Apple Developer Program**。
+- GUI 未使用 Developer ID 签名，也未经过 Apple 公证，因此从网上下载后 macOS 可能提示“无法验证开发者”。
+- 打开方式：右键点击 App → 选择**打开**；或在终端中移除隔离属性：
+  ```sh
+  xattr -dr com.apple.quarantine /Applications/TimeMachineBoost.app
+  ```
+- 若要向公众分发，需要加入 Apple Developer Program、申请 Developer ID Application 证书并完成公证；在此之前请把 Release 构建视为个人/测试用途。
+- Shell TUI/CLI 不受代码签名影响。
+
 ## 权限说明
 
 | 操作 | 所需权限 |
