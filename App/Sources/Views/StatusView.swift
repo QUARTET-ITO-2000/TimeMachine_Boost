@@ -15,6 +15,11 @@ struct StatusView: View {
                 Task { await model.refresh() }
             }
             .disabled(!model.canRefresh)
+
+            Button(L10n.t("main.privilegedRead")) {
+                Task { await model.readStateWithAdministratorPrivileges() }
+            }
+            .disabled(!model.canReadWithPrivileges)
         }
     }
 }

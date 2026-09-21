@@ -7,6 +7,14 @@ enum ThrottleParameter {
     static let sysctlPath = "/usr/sbin/sysctl"
 }
 
+/// The two values the kernel parameter accepts.
+enum ThrottleValue: String {
+    /// `1`, the system default: low-priority I/O throttling is on.
+    case throttleEnabled = "1"
+    /// `0`, boost mode: low-priority I/O throttling is off.
+    case throttleDisabled = "0"
+}
+
 /// State of the low-priority I/O throttle that Time Machine backups run under.
 enum ThrottleState: Equatable {
     /// `debug.lowpri_throttle_enabled = 1`, the system default: throttling is on.
@@ -17,20 +25,28 @@ enum ThrottleState: Equatable {
     case unknown
 
     init?(sysctlValue: String) {
-        switch sysctlValue {
-        case "0": self = .throttleDisabled
-        case "1": self = .throttleEnabled
-        default: return nil
+        guard let value = ThrottleValue(rawValue: sysctlValue) else { return nil }
+        self.init(value)
+    }
+
+    init(_ value: ThrottleValue) {
+        switch value {
+        case .throttleEnabled: self = .throttleEnabled
+        case .throttleDisabled: self = .throttleDisabled
         }
     }
 
     /// The sysctl value this state corresponds to; `nil` for `.unknown`.
-    var sysctlValue: String? {
+    var value: ThrottleValue? {
         switch self {
-        case .throttleEnabled: return "1"
-        case .throttleDisabled: return "0"
+        case .throttleEnabled: return .throttleEnabled
+        case .throttleDisabled: return .throttleDisabled
         case .unknown: return nil
         }
+    }
+
+    var sysctlValue: String? {
+        value?.rawValue
     }
 
     /// `true` when boost mode is active, i.e. low-priority I/O throttling is disabled.
