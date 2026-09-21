@@ -1,0 +1,34 @@
+import AppKit
+import SwiftUI
+
+/// Scene identifiers, shared between the app definition and the views that open them.
+enum WindowID {
+    static let main = "main"
+    static let logs = "logs"
+}
+
+@main
+struct TimeMachineBoostApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
+    var body: some Scene {
+        Window("Time Machine Boost", id: WindowID.main) {
+            ContentView()
+        }
+        .windowResizability(.contentSize)
+        .commands {
+            // Keep the localized application menu entries of the legacy GUI.
+            CommandGroup(replacing: .appInfo) {
+                Button(L10n.t("menu.about")) {
+                    NSApp.orderFrontStandardAboutPanel(nil)
+                }
+            }
+            CommandGroup(replacing: .appTermination) {
+                Button(L10n.t("menu.quit")) {
+                    NSApp.terminate(nil)
+                }
+                .keyboardShortcut("q")
+            }
+        }
+    }
+}
