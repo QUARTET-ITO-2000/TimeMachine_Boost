@@ -31,7 +31,7 @@ El valor se aplica en tiempo de ejecución y vuelve al predeterminado tras reini
 - Interruptor nativo que lee y muestra el estado real al iniciar.
 - Cambia el valor mediante el diálogo de autorización de administrador del sistema y, después, **lo verifica leyéndolo de nuevo**, en lugar de dar por hecho que funcionó.
 - Botón alternativo de “lectura con privilegios de administrador” cuando el estado no se puede leer directamente.
-- Ventana de registros dedicada que transmite los logs de Time Machine en tiempo real, con opciones de limpiar y desplazamiento automático. Cerrar la ventana solo detiene y oculta la transmisión; la app sigue abierta.
+- Ventana de registros dedicada que transmite los logs de Time Machine en tiempo real, con opciones de limpiar y desplazamiento automático. Cerrar la ventana detiene la transmisión; la app sigue abierta.
 - Interfaz trilingüe: inglés (predeterminado), 简体中文 y Español. Sigue el idioma del sistema y también se puede elegir desde la ventana principal.
 - Sin dependencias de terceros.
 
@@ -46,7 +46,7 @@ El valor se aplica en tiempo de ejecución y vuelve al predeterminado tras reini
 
 - macOS 13 o posterior (la GUI se desarrolló y verificó en macOS 26 / arm64)
 - Una cuenta de administrador (necesaria al cambiar el valor)
-- AppKit para la GUI; sin dependencias de terceros
+- SwiftUI + AppKit para la GUI; sin dependencias de terceros
 - Idiomas de la interfaz: English, 简体中文, Español
 
 ## Uso
@@ -60,7 +60,7 @@ open TimeMachineBoost.app
 1. El interruptor muestra el estado actual después de iniciar.
 2. Al cambiarlo se abre el diálogo de autorización de administrador; tras aprobarlo, la app modifica el valor y lo verifica leyéndolo de nuevo.
 3. Pulsa **Registros en tiempo real…** para abrir la ventana de logs. Si no hay ninguna copia en curso, normalmente no hay salida; ejecuta `tmutil startbackup` para iniciar una.
-4. Cerrar la ventana de registros solo la detiene y oculta. Ábrela de nuevo para iniciar una transmisión nueva.
+4. Cerrar la ventana de registros detiene la transmisión. Ábrela de nuevo desde la ventana principal para iniciar una transmisión nueva.
 5. Usa el menú **Idioma** al final de la ventana para cambiar el idioma de la interfaz (English, 简体中文, Español). La app se reinicia después de confirmar.
 
 > En este prototipo, cada cambio solicita autorización de administrador. Para “autorizar una vez y cambiar muchas veces” se necesitaría un helper LaunchDaemon con privilegios.
@@ -101,6 +101,7 @@ Sin dependencias de terceros; solo se necesitan las Xcode Command Line Tools.
 cd App
 sh build.sh                 # crea App/TimeMachineBoost.app
 sh build.sh /tmp/dist       # o indica un directorio de salida
+TMB_BUILD_MODE=debug sh build.sh /tmp/dist  # compilación de depuración (-Onone -g)
 ```
 
 Verifica la firma:
@@ -118,7 +119,14 @@ TimeMachineBoost/
 ├── README.es.md              # Español
 ├── LICENSE                   # MIT
 ├── App/                      # GUI nativa
-│   ├── main.m                # programa principal en AppKit (interruptor + ventana de logs)
+│   ├── Sources/              # aplicación SwiftUI
+│   │   ├── TimeMachineBoostApp.swift
+│   │   ├── App/              # AppDelegate, identificadores de ventana
+│   │   ├── Models/           # ThrottleState, LogStore, AppLanguage
+│   │   ├── Services/         # TimeMachineManager, AuthorizationManager, LogStreamManager
+│   │   ├── ViewModels/       # BoostViewModel
+│   │   ├── Views/            # ContentView, StatusView, LogView
+│   │   └── Localization/     # búsqueda de cadenas (L10n)
 │   ├── Info.plist
 │   ├── build.sh
 │   └── Resources/            # Localizable.strings
@@ -151,7 +159,7 @@ TimeMachineBoost/
 
 ### ¿Cerrar la ventana de registros cierra la app o provoca un fallo?
 
-No. Desde la v0.3, la ventana de registros se detiene y se oculta en lugar de destruirse, evitando el fallo por liberación durante la animación de cierre. La v0.4 añade la interfaz trilingüe. Si aun así la app se cierra de forma inesperada, adjunta el informe de fallo.
+No. Cerrar la ventana de registros detiene la transmisión; la app sigue en ejecución mientras haya una ventana abierta. Si la vuelves a abrir desde la ventana principal, se inicia una transmisión nueva. Si aun así la app se cierra de forma inesperada, adjunta el informe de fallo.
 
 ### ¿Por qué no hay una opción de “activar automáticamente al iniciar”?
 
@@ -163,6 +171,7 @@ La app verifica el resultado leyendo el valor después de cada cambio. Si la ver
 
 ## Historial de versiones
 
+- **v0.6.0**: la GUI se reescribió en Swift + SwiftUI (mismas funciones, modelo de autorización y comportamiento de los registros; el interruptor ahora refleja siempre el estado real).
 - **v0.5.2**: añadido el icono personalizado de la app.
 - **v0.5.1**: corregido el interruptor que quedaba deshabilitado hasta pulsar “Actualizar estado” tras iniciar.
 - **v0.5**: selector de idioma en la ventana principal (English / 简体中文 / Español).

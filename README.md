@@ -31,7 +31,7 @@ The value is applied at runtime and returns to the default after a reboot. This 
 - Native system switch that reads and shows the real current state on launch.
 - Toggles through the system administrator authorization dialog, then **reads the value back** to verify the change instead of assuming success.
 - Fallback “read with administrator privileges” button when the value cannot be read directly.
-- Dedicated log window that streams Time Machine logs in real time, with clear/autoscroll support. Closing the window stops and hides it; the app keeps running.
+- Dedicated log window that streams Time Machine logs in real time, with clear/autoscroll support. Closing the window stops the stream; the app keeps running.
 - Trilingual interface: English (default), 简体中文 and Español. Follows the system language and can also be chosen from the main window.
 - No third-party dependencies.
 
@@ -46,7 +46,7 @@ The value is applied at runtime and returns to the default after a reboot. This 
 
 - macOS 13 or later (GUI developed and verified on macOS 26 / arm64)
 - An administrator account (required when toggling)
-- AppKit for the GUI; no third-party dependencies
+- SwiftUI + AppKit for the GUI; no third-party dependencies
 - Interface languages: English, 简体中文, Español
 
 ## Usage
@@ -60,7 +60,7 @@ open TimeMachineBoost.app
 1. The switch shows the current state after launch.
 2. Toggling opens the macOS administrator authorization dialog; after approval, the app changes the value and verifies it by reading it back.
 3. Click **Real-time logs…** to open the log window. If no backup is running there is usually no new output; run `tmutil startbackup` to trigger one.
-4. Closing the log window stops and hides it only. Open it again to start a fresh stream.
+4. Closing the log window stops the stream. Open it again from the main window to start a fresh stream.
 5. Use the **Language** menu at the bottom of the window to switch the interface language (English, 简体中文, Español). The app restarts after confirmation.
 
 > In this prototype every toggle asks for administrator authorization. An “authorize once, toggle many times” flow requires a privileged LaunchDaemon helper.
@@ -101,6 +101,7 @@ No third-party dependencies; only the Xcode Command Line Tools are required.
 cd App
 sh build.sh                 # creates App/TimeMachineBoost.app
 sh build.sh /tmp/dist       # or pass an output directory
+TMB_BUILD_MODE=debug sh build.sh /tmp/dist  # debug build (-Onone -g)
 ```
 
 Verify the signature:
@@ -118,7 +119,14 @@ TimeMachineBoost/
 ├── README.es.md              # Español
 ├── LICENSE                   # MIT
 ├── App/                      # native GUI
-│   ├── main.m                # AppKit main program (switch + log window)
+│   ├── Sources/              # SwiftUI application
+│   │   ├── TimeMachineBoostApp.swift
+│   │   ├── App/              # AppDelegate, scene identifiers
+│   │   ├── Models/           # ThrottleState, LogStore, AppLanguage
+│   │   ├── Services/         # TimeMachineManager, AuthorizationManager, LogStreamManager
+│   │   ├── ViewModels/       # BoostViewModel
+│   │   ├── Views/            # ContentView, StatusView, LogView
+│   │   └── Localization/     # L10n bundle lookup
 │   ├── Info.plist
 │   ├── build.sh
 │   └── Resources/            # Localizable.strings
@@ -151,7 +159,7 @@ TimeMachineBoost/
 
 ### Closing the log window quits the app / crashes?
 
-No. Since v0.3 the log window is stopped and hidden instead of being destroyed, avoiding a release-during-close-animation crash. v0.4 adds the trilingual interface. If you still see an unexpected exit, please attach the crash report.
+No. Closing the log window stops the stream; the app keeps running while a window is open. Reopening it from the main window starts a fresh stream. If you do see an unexpected exit, please attach the crash report.
 
 ### Why is there no “auto-enable after boot” option?
 
@@ -163,6 +171,7 @@ The app verifies the result by reading the value back after each change. If the 
 
 ## Version history
 
+- **v0.6.0**: The GUI was rewritten in Swift + SwiftUI (same features, authorization model and log behaviour; the switch now always reflects the real state).
 - **v0.5.2**: Added the custom app icon.
 - **v0.5.1**: Fixed the switch remaining disabled until “Refresh State” was clicked after launch.
 - **v0.5**: Added an in-window language selector (English / 简体中文 / Español).

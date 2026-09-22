@@ -31,7 +31,7 @@ macOS 通过内核参数暴露这个节流开关：
 - 原生系统开关，启动时读取并显示真实状态；
 - 通过系统管理员授权框切换，并在同一轮授权内“设置 + 回读验证”，不会假装成功；
 - 直接读取受限时，可用“以管理员权限读取”兜底；
-- 独立日志窗口实时展示 Time Machine 日志，支持清空与自动滚动；关闭窗口只会停止并隐藏，App 不退出；
+- 独立日志窗口实时展示 Time Machine 日志，支持清空与自动滚动；关闭窗口会停止日志流，App 不退出；
 - 界面支持英语（默认）、简体中文和西班牙语，跟随系统语言，也可在主窗口内手动选择；
 - 无第三方依赖。
 
@@ -46,7 +46,7 @@ macOS 通过内核参数暴露这个节流开关：
 
 - macOS 13 或更高（GUI 在 macOS 26 / arm64 上开发验证）
 - 管理员账户（切换时需要授权）
-- GUI 依赖 AppKit；无第三方依赖
+- GUI 使用 SwiftUI + AppKit；无第三方依赖
 - 界面语言：英语、简体中文、西班牙语
 
 ## 使用方法
@@ -60,7 +60,7 @@ open TimeMachineBoost.app
 1. 启动后开关会显示当前真实状态；
 2. 拨动开关会弹出系统管理员授权框，授权后完成切换并回读验证；
 3. 点击“实时日志…”打开日志窗口；没有备份活动时通常没有新输出，可先执行 `tmutil startbackup`；
-4. 关闭日志窗口只会停止并隐藏，再次打开会重新开始监听。
+4. 关闭日志窗口会停止日志流；再次从主窗口打开会重新开始监听。
 5. 使用主窗口底部的“语言”菜单可切换界面语言（English / 简体中文 / Español），确认后 App 会重启生效。
 
 > 原型阶段每次切换都会请求管理员授权；要做到“授权一次、多次切换”，需要引入特权 LaunchDaemon helper。
@@ -101,6 +101,7 @@ TUI 快捷键：
 cd App
 sh build.sh                 # 生成 App/TimeMachineBoost.app
 sh build.sh /tmp/dist       # 或指定输出目录
+TMB_BUILD_MODE=debug sh build.sh /tmp/dist  # 调试构建（-Onone -g）
 ```
 
 校验签名：
@@ -118,7 +119,14 @@ TimeMachineBoost/
 ├── README.es.md              # Español
 ├── LICENSE                   # MIT
 ├── App/                      # 原生 GUI
-│   ├── main.m                # AppKit 主程序（开关 + 日志窗口）
+│   ├── Sources/              # SwiftUI 应用
+│   │   ├── TimeMachineBoostApp.swift
+│   │   ├── App/              # AppDelegate、窗口标识
+│   │   ├── Models/           # ThrottleState、LogStore、AppLanguage
+│   │   ├── Services/         # TimeMachineManager、AuthorizationManager、LogStreamManager
+│   │   ├── ViewModels/       # BoostViewModel
+│   │   ├── Views/            # ContentView、StatusView、LogView
+│   │   └── Localization/     # L10n 本地化查找
 │   ├── Info.plist
 │   ├── build.sh
 │   └── Resources/            # Localizable.strings
@@ -151,7 +159,7 @@ TimeMachineBoost/
 
 ### 关闭日志窗口会导致程序退出/崩溃？
 
-不会。v0.3 起日志窗口关闭时只“停止并隐藏”，不再销毁窗口，避免关闭动画期间释放导致的崩溃。v0.4 加入了三语界面。若仍异常退出，请附上崩溃报告。
+不会。关闭日志窗口只会停止日志流，只要还有窗口打开 App 就会继续运行；再次从主窗口打开会重新开始监听。若仍异常退出，请附上崩溃报告。
 
 ### 为什么没有“开机自动加速”选项？
 
@@ -163,6 +171,7 @@ TimeMachineBoost/
 
 ## 版本记录
 
+- **v0.6.0**：GUI 使用 Swift + SwiftUI 重写（功能、授权模型与日志行为保持一致；开关改为以真实状态为准）。
 - **v0.5.2**：加入自定义 App 图标。
 - **v0.5.1**：修复启动后开关需先点击“刷新状态”才能使用的问题。
 - **v0.5**：主窗口新增语言选择器（English / 简体中文 / Español）。
