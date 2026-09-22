@@ -16,13 +16,20 @@ struct ContentView: View {
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
+                // The subtitle describes the state of the same feature as the title, so
+                // both are read as one element instead of two fragments.
+                .accessibilityElement(children: .combine)
 
                 Spacer(minLength: 12)
 
+                // The switch keeps its AppKit switch trait and its own on/off value;
+                // only the missing name and hint are added.
                 Toggle("", isOn: boostBinding)
                     .toggleStyle(.switch)
                     .labelsHidden()
                     .disabled(!model.canToggle)
+                    .accessibilityLabel(L10n.t("a11y.boost.label"))
+                    .accessibilityHint(L10n.t("a11y.boost.hint"))
             }
 
             StatusView(model: model)
@@ -34,6 +41,7 @@ struct ContentView: View {
                         logManager.restart()
                         openWindow(id: WindowID.logs)
                     }
+                    .accessibilityHint(L10n.t("a11y.openLogs.hint"))
 
                     Spacer(minLength: 8)
 
@@ -61,6 +69,12 @@ struct ContentView: View {
         .padding(20)
         .frame(width: 520, alignment: .leading)
         .task { await model.loadInitialState() }
+        .onChange(of: model.status) { status in
+            // Only the settled results are announced; the transient reading/applying
+            // states stay silent so the user is not interrupted for every step.
+            guard let message = status?.announcementMessage else { return }
+            AccessibilityAnnouncement.post(message)
+        }
         .alert(L10n.t("language.restartTitle"), isPresented: $model.isRestartPromptPresented) {
             Button(L10n.t("language.restartNow")) {
                 Task {
@@ -82,6 +96,8 @@ struct ContentView: View {
             Text(L10n.t("language.label"))
                 .font(.callout)
                 .foregroundStyle(.secondary)
+                // The picker carries the name itself, so the visible label is not read twice.
+                .accessibilityHidden(true)
 
             Spacer(minLength: 8)
 
@@ -92,6 +108,7 @@ struct ContentView: View {
             }
             .labelsHidden()
             .pickerStyle(.menu)
+            .accessibilityLabel(L10n.t("a11y.language.label"))
             .frame(width: 160)
             .onChange(of: model.languageSelection) { _ in
                 model.languageSelectionChanged()

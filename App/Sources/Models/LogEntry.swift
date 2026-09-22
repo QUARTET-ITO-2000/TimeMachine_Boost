@@ -25,4 +25,15 @@ enum LogStatus: Equatable {
     var isError: Bool {
         self == .startFailed
     }
+
+    /// Spoken version of the status for assistive technologies. A running stream stays
+    /// silent: the point of the log window is to keep arriving lines out of speech.
+    var announcementMessage: String? {
+        switch self {
+        case .preparing, .streaming:
+            return nil
+        case .startFailed, .ended:
+            return message
+        }
+    }
 }

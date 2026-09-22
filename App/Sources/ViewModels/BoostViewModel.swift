@@ -53,6 +53,21 @@ enum BoostStatus: Equatable {
             return true
         }
     }
+
+    /// Spoken version of the status for assistive technologies.
+    ///
+    /// Only settled results are announced: the transient `.reading`, `.applying` and
+    /// `.readingPrivileged` states would otherwise talk over every operation, and the
+    /// streamed log lines are deliberately never announced at all.
+    var announcementMessage: String? {
+        switch self {
+        case .reading, .readingPrivileged, .applying:
+            return nil
+        case .current, .readFailed, .privilegedReadDone, .privilegedReadFailed,
+             .authorizationCancelled, .applied, .applyFailed, .relaunchFailed:
+            return message
+        }
+    }
 }
 
 @MainActor

@@ -64,3 +64,22 @@
 "io.state.enabled" = "Activado";
 "io.state.disabled" = "Desactivado";
 "io.state.unknown" = "Desconocido";
+
+/* Accesibilidad */
+"a11y.boost.label" = "Aceleración de copias de Time Machine";
+"a11y.boost.hint" = "Activa o desactiva el modo boost. Requiere autorización de administrador.";
+"a11y.status.label" = "Estado de la aceleración de Time Machine";
+"a11y.status.value.boost" = "Activado. El parámetro del kernel %@ es 0.";
+"a11y.status.value.default" = "Desactivado. El parámetro del kernel %@ es 1.";
+"a11y.status.value.unknown" = "Desconocido; no se pudo leer el parámetro del kernel.";
+"a11y.refresh.label" = "Actualizar el estado de la aceleración de Time Machine";
+"a11y.refresh.hint" = "Vuelve a leer el parámetro del kernel sin privilegios de administrador.";
+"a11y.privilegedRead.hint" = "Solicita autorización de administrador para leer el parámetro del kernel.";
+"a11y.openLogs.hint" = "Abre la ventana de registros en vivo e inicia la transmisión.";
+"a11y.language.label" = "Idioma de la interfaz";
+"a11y.log.viewer.label" = "Visor de registros de Time Machine";
+"a11y.log.viewer.hint" = "Salida de registros en vivo; lee las líneas con la navegación habitual.";
+"a11y.log.clear.label" = "Borrar el registro de Time Machine";
+"a11y.log.clear.hint" = "Elimina las líneas de registro mostradas en esta ventana.";
+"a11y.log.stop.label" = "Detener la transmisión de registros de Time Machine";
+"a11y.log.stop.hint" = "Detiene la transmisión y cierra esta ventana.";

@@ -64,3 +64,22 @@
 "io.state.enabled" = "Enabled";
 "io.state.disabled" = "Disabled";
 "io.state.unknown" = "Unknown";
+
+/* Accessibility */
+"a11y.boost.label" = "Time Machine backup boost";
+"a11y.boost.hint" = "Turns boost mode on or off. Requires administrator authorization.";
+"a11y.status.label" = "Time Machine Boost status";
+"a11y.status.value.boost" = "Enabled. Kernel parameter %@ is 0.";
+"a11y.status.value.default" = "Disabled. Kernel parameter %@ is 1.";
+"a11y.status.value.unknown" = "Unknown; the kernel parameter could not be read.";
+"a11y.refresh.label" = "Refresh Time Machine Boost status";
+"a11y.refresh.hint" = "Reads the kernel parameter again without administrator privileges.";
+"a11y.privilegedRead.hint" = "Asks for administrator authorization to read the kernel parameter.";
+"a11y.openLogs.hint" = "Opens the live log window and starts streaming Time Machine logs.";
+"a11y.language.label" = "Interface language";
+"a11y.log.viewer.label" = "Time Machine log viewer";
+"a11y.log.viewer.hint" = "Live log output. Read the lines with normal navigation.";
+"a11y.log.clear.label" = "Clear Time Machine log";
+"a11y.log.clear.hint" = "Removes the log lines shown in this window.";
+"a11y.log.stop.label" = "Stop Time Machine log stream";
+"a11y.log.stop.hint" = "Stops streaming logs and closes this window.";

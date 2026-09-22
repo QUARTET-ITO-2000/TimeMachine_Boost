@@ -29,12 +29,16 @@ struct LogView: View {
                 Button(L10n.t("log.clear")) {
                     manager.clear()
                 }
+                .accessibilityLabel(L10n.t("a11y.log.clear.label"))
+                .accessibilityHint(L10n.t("a11y.log.clear.hint"))
 
                 Spacer(minLength: 8)
 
                 Button(L10n.t("log.stopAndHide")) {
                     stopAndHide()
                 }
+                .accessibilityLabel(L10n.t("a11y.log.stop.label"))
+                .accessibilityHint(L10n.t("a11y.log.stop.hint"))
             }
         }
         .padding(12)
@@ -47,6 +51,12 @@ struct LogView: View {
         }
         .onDisappear {
             manager.stop()
+        }
+        .onChange(of: manager.status) { status in
+            // Streamed lines are never announced; only the end of the stream and a
+            // stream that could not be started are worth interrupting for.
+            guard let message = status.announcementMessage else { return }
+            AccessibilityAnnouncement.post(message)
         }
     }
 
@@ -68,6 +78,11 @@ struct LogView: View {
                 RoundedRectangle(cornerRadius: 4)
                     .stroke(Color(nsColor: .separatorColor))
             )
+            // The viewer is one named group: VoiceOver can enter it and read the lines
+            // at its own pace, while new lines never announce themselves.
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel(L10n.t("a11y.log.viewer.label"))
+            .accessibilityHint(L10n.t("a11y.log.viewer.hint"))
             .onChange(of: manager.entries.count) { _ in
                 guard let last = manager.entries.last else { return }
                 proxy.scrollTo(last.id, anchor: .bottom)

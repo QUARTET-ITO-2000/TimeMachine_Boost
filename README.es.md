@@ -169,6 +169,12 @@ Es una omisión deliberada. Ese parámetro protege la capacidad de respuesta del
 
 La app verifica el resultado leyendo el valor después de cada cambio. Si la verificación falla, muestra “el comando se ejecutó pero la verificación no devolvió el valor esperado”, en lugar de fingir que todo funcionó. Confirma que tu versión de macOS todavía admite este parámetro.
 
+## Accesibilidad
+
+La GUI de SwiftUI incorpora etiquetas, valores y sugerencias de VoiceOver en sus controles principales; anuncia el resultado de los cambios de boost, las actualizaciones, las autorizaciones canceladas y los fallos; da nombre al visor de registros en lugar de anunciar cada línea; y mantiene los botones legibles cuando el tamaño del texto aumenta. Los textos de accesibilidad están localizados en English, 简体中文 y Español.
+
+Límite honesto: esta revisión la escribieron y probaron desarrolladores videntes. No la ha probado una persona usuaria de lector de pantalla ni se ha auditado conforme a WCAG, así que «no encontramos problemas» no significa que la app sea totalmente accesible. Si algo te bloquea, cuéntanos qué operación, qué atajo de VoiceOver o qué ajuste del sistema estaba implicado.
+
 ## Historial de versiones
 
 - **v0.6.0**: la GUI se reescribió en Swift + SwiftUI (mismas funciones, modelo de autorización y comportamiento de los registros; el interruptor ahora refleja siempre el estado real).
