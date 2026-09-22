@@ -56,3 +56,11 @@
 /* Errors */
 "error.cannotLaunchProcess" = "Unable to launch process";
 "error.unknown" = "Unknown error";
+
+/* Sections and indicators */
+"section.systemStatus" = "System Status";
+"section.logs" = "Logs";
+"system.lowPriorityIO" = "Low-priority I/O";
+"io.state.enabled" = "Enabled";
+"io.state.disabled" = "Disabled";
+"io.state.unknown" = "Unknown";

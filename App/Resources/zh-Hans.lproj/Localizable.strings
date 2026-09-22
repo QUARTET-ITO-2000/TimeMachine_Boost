@@ -56,3 +56,11 @@
 /* 错误 */
 "error.cannotLaunchProcess" = "无法启动进程";
 "error.unknown" = "未知错误";
+
+/* 分区与状态指示 */
+"section.systemStatus" = "系统状态";
+"section.logs" = "日志";
+"system.lowPriorityIO" = "低优先级 I/O";
+"io.state.enabled" = "已开启";
+"io.state.disabled" = "已关闭";
+"io.state.unknown" = "未知";

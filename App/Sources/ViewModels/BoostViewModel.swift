@@ -85,6 +85,15 @@ final class BoostViewModel: ObservableObject {
         }
     }
 
+    /// Text of the low-priority I/O indicator.
+    var ioStateDescription: String {
+        switch state {
+        case .throttleEnabled: return L10n.t("io.state.enabled")
+        case .throttleDisabled: return L10n.t("io.state.disabled")
+        case .unknown: return L10n.t("io.state.unknown")
+        }
+    }
+
     var statusMessage: String { status?.message ?? "" }
     var statusIsError: Bool { status?.isError ?? false }
     var canRefresh: Bool { !isBusy }

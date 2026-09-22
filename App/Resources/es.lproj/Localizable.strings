@@ -56,3 +56,11 @@
 /* Errores */
 "error.cannotLaunchProcess" = "No se pudo iniciar el proceso";
 "error.unknown" = "Error desconocido";
+
+/* Secciones e indicadores */
+"section.systemStatus" = "Estado del sistema";
+"section.logs" = "Registros";
+"system.lowPriorityIO" = "I/O de baja prioridad";
+"io.state.enabled" = "Activado";
+"io.state.disabled" = "Desactivado";
+"io.state.unknown" = "Desconocido";

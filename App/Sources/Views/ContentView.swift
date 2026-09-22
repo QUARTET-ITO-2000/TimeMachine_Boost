@@ -6,7 +6,7 @@ struct ContentView: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L10n.t("main.title"))
@@ -25,19 +25,38 @@ struct ContentView: View {
                     .disabled(!model.canToggle)
             }
 
-            Divider()
-
             StatusView(model: model)
 
-            Button(L10n.t("main.openLogs")) {
-                // Opening the window always starts a fresh stream, like the legacy GUI.
-                logManager.restart()
-                openWindow(id: WindowID.logs)
+            GroupBox {
+                HStack(spacing: 8) {
+                    Button(L10n.t("main.openLogs")) {
+                        // Opening the window always starts a fresh stream, like the legacy GUI.
+                        logManager.restart()
+                        openWindow(id: WindowID.logs)
+                    }
+
+                    Spacer(minLength: 8)
+
+                    Text(L10n.t("main.version"))
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 2)
+            } label: {
+                Text(L10n.t("section.logs"))
+                    .font(.subheadline)
             }
 
-            Divider()
-
             languageRow
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(L10n.t("main.note1"))
+                Text(L10n.t("main.note2"))
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
         }
         .padding(20)
         .frame(width: 520, alignment: .leading)
