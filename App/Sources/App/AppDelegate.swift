@@ -6,4 +6,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         true
     }
+
+    /// Never leave a `log stream` process behind.
+    func applicationWillTerminate(_ notification: Notification) {
+        LogStreamManager.shared.stop()
+    }
 }

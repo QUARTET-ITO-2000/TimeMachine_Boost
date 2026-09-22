@@ -30,5 +30,11 @@ struct TimeMachineBoostApp: App {
                 .keyboardShortcut("q")
             }
         }
+
+        Window(L10n.t("log.windowTitle"), id: WindowID.logs) {
+            LogView(manager: LogStreamManager.shared)
+        }
+        .defaultSize(width: 760, height: 500)
+        .windowResizability(.contentMinSize)
     }
 }

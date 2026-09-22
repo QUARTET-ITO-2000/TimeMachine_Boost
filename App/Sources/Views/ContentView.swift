@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var model = BoostViewModel()
+    @ObservedObject private var logManager = LogStreamManager.shared
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -26,6 +28,12 @@ struct ContentView: View {
             Divider()
 
             StatusView(model: model)
+
+            Button(L10n.t("main.openLogs")) {
+                // Opening the window always starts a fresh stream, like the legacy GUI.
+                logManager.restart()
+                openWindow(id: WindowID.logs)
+            }
         }
         .padding(20)
         .frame(width: 520, alignment: .leading)
