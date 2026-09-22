@@ -34,10 +34,50 @@ struct ContentView: View {
                 logManager.restart()
                 openWindow(id: WindowID.logs)
             }
+
+            Divider()
+
+            languageRow
         }
         .padding(20)
         .frame(width: 520, alignment: .leading)
         .task { await model.loadInitialState() }
+        .alert(L10n.t("language.restartTitle"), isPresented: $model.isRestartPromptPresented) {
+            Button(L10n.t("language.restartNow")) {
+                Task {
+                    if await model.applyLanguageChange() {
+                        NSApp.terminate(nil)
+                    }
+                }
+            }
+            Button(L10n.t("language.later"), role: .cancel) {
+                model.cancelLanguageChange()
+            }
+        } message: {
+            Text(L10n.t("language.restartMessage"))
+        }
+    }
+
+    private var languageRow: some View {
+        HStack(spacing: 8) {
+            Text(L10n.t("language.label"))
+                .font(.callout)
+                .foregroundStyle(.secondary)
+
+            Spacer(minLength: 8)
+
+            Picker("", selection: $model.languageSelection) {
+                ForEach(AppLanguage.allCases) { language in
+                    Text(language.displayName).tag(language)
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .frame(width: 160)
+            .onChange(of: model.languageSelection) { _ in
+                model.languageSelectionChanged()
+            }
+        }
     }
 
     /// The switch follows the verified system state, so a cancelled authorization

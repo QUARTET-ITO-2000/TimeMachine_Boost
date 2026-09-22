@@ -12,6 +12,7 @@ enum BoostStatus: Equatable {
     case applying
     case applied(boostEnabled: Bool, key: String, value: String)
     case applyFailed(exitStatus: Int32)
+    case relaunchFailed(String)
 
     var message: String {
         switch self {
@@ -39,6 +40,8 @@ enum BoostStatus: Equatable {
             )
         case .applyFailed(let exitStatus):
             return L10n.t("status.toggleFailed", exitStatus)
+        case .relaunchFailed(let reason):
+            return L10n.t("status.relaunchFailed", reason)
         }
     }
 
@@ -46,7 +49,7 @@ enum BoostStatus: Equatable {
         switch self {
         case .reading, .current, .readingPrivileged, .privilegedReadDone, .applying, .applied:
             return false
-        case .readFailed, .privilegedReadFailed, .authorizationCancelled, .applyFailed:
+        case .readFailed, .privilegedReadFailed, .authorizationCancelled, .applyFailed, .relaunchFailed:
             return true
         }
     }
@@ -57,12 +60,20 @@ final class BoostViewModel: ObservableObject {
     @Published private(set) var state: ThrottleState = .unknown
     @Published private(set) var status: BoostStatus?
     @Published private(set) var isBusy = false
+    @Published var languageSelection: AppLanguage
+    @Published var isRestartPromptPresented = false
 
     private let manager: TimeMachineManager
+    private let effectiveLanguage: AppLanguage
     private var hasLoadedInitialState = false
 
-    init(manager: TimeMachineManager = TimeMachineManager()) {
+    init(
+        manager: TimeMachineManager = TimeMachineManager(),
+        language: AppLanguage = AppLanguage.current
+    ) {
         self.manager = manager
+        self.effectiveLanguage = language
+        self.languageSelection = language
     }
 
     /// Short description of the current state, shown below the title.
@@ -159,5 +170,29 @@ final class BoostViewModel: ObservableObject {
                 status = .applyFailed(exitStatus: 1)
             }
         }
+    }
+
+    // MARK: - Language
+
+    /// The legacy GUI asked for confirmation before restarting in the new language.
+    func languageSelectionChanged() {
+        guard languageSelection != effectiveLanguage else { return }
+        isRestartPromptPresented = true
+    }
+
+    func cancelLanguageChange() {
+        isRestartPromptPresented = false
+        languageSelection = effectiveLanguage
+    }
+
+    /// Stores the language and starts a relaunch. `true` means the caller should quit.
+    func applyLanguageChange() async -> Bool {
+        isRestartPromptPresented = false
+        let relaunched = await LanguageManager.apply(languageSelection)
+        if !relaunched {
+            status = .relaunchFailed(L10n.t("error.unknown"))
+            languageSelection = effectiveLanguage
+        }
+        return relaunched
     }
 }
