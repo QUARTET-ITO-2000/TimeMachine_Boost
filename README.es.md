@@ -177,6 +177,7 @@ Límite honesto: esta revisión la escribieron y probaron desarrolladores vident
 
 ## Historial de versiones
 
+- **v0.6.1**: Revisión de accesibilidad de la GUI de SwiftUI (etiquetas, valores y sugerencias de VoiceOver; anuncio del resultado de los cambios de boost, actualizaciones, autorizaciones canceladas y fallos; semántica del visor de registros; diseño de los botones con texto grande). Sin verificar con una persona usuaria de lector de pantalla.
 - **v0.6.0**: la GUI se reescribió en Swift + SwiftUI (mismas funciones, modelo de autorización y comportamiento de los registros; el interruptor ahora refleja siempre el estado real).
 - **v0.5.2**: añadido el icono personalizado de la app.
 - **v0.5.1**: corregido el interruptor que quedaba deshabilitado hasta pulsar “Actualizar estado” tras iniciar.

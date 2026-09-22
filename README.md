@@ -177,6 +177,7 @@ Honest limit: this pass was written and reviewed by sighted developers. It was n
 
 ## Version history
 
+- **v0.6.1**: Accessibility pass for the SwiftUI GUI (VoiceOver labels/values/hints, spoken results for Boost changes, refreshes, cancelled authorizations and failures, log viewer semantics, button layout at larger text sizes). Not verified with a screen-reader user.
 - **v0.6.0**: The GUI was rewritten in Swift + SwiftUI (same features, authorization model and log behaviour; the switch now always reflects the real state).
 - **v0.5.2**: Added the custom app icon.
 - **v0.5.1**: Fixed the switch remaining disabled until “Refresh State” was clicked after launch.
