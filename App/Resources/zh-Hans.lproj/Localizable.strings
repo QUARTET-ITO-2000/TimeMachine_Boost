@@ -8,7 +8,7 @@
 "main.refresh" = "刷新状态";
 "main.privilegedRead" = "以管理员权限读取";
 "main.openLogs" = "实时日志…";
-"main.version" = "v0.6.0 原型";
+"main.version" = "v0.6.1 原型";
 "main.note1" = "加速模式会把 debug.lowpri_throttle_enabled 设为 0，仅对本次开机生效，重启后恢复系统默认。";
 "main.note2" = "切换和“以管理员权限读取”会弹出系统管理员授权框；原型阶段每次都会请求，属预期行为。";
 
@@ -64,3 +64,22 @@
 "io.state.enabled" = "已开启";
 "io.state.disabled" = "已关闭";
 "io.state.unknown" = "未知";
+
+/* 辅助功能 */
+"a11y.boost.label" = "Time Machine 备份加速";
+"a11y.boost.hint" = "开启或关闭加速模式，需要管理员授权。";
+"a11y.status.label" = "Time Machine 加速状态";
+"a11y.status.value.boost" = "已开启。内核参数 %@ 的值为 0。";
+"a11y.status.value.default" = "已关闭。内核参数 %@ 的值为 1。";
+"a11y.status.value.unknown" = "未知，无法读取内核参数。";
+"a11y.refresh.label" = "刷新 Time Machine 加速状态";
+"a11y.refresh.hint" = "无需管理员权限，重新读取内核参数。";
+"a11y.privilegedRead.hint" = "通过管理员授权读取内核参数。";
+"a11y.openLogs.hint" = "打开实时日志窗口并开始监听 Time Machine 日志。";
+"a11y.language.label" = "界面语言";
+"a11y.log.viewer.label" = "Time Machine 日志查看器";
+"a11y.log.viewer.hint" = "实时日志输出，可用常规方式逐行阅读。";
+"a11y.log.clear.label" = "清空 Time Machine 日志";
+"a11y.log.clear.hint" = "移除当前窗口中的日志内容。";
+"a11y.log.stop.label" = "停止 Time Machine 日志流";
+"a11y.log.stop.hint" = "停止监听日志并关闭该窗口。";
