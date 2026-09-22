@@ -171,6 +171,7 @@ La app verifica el resultado leyendo el valor después de cada cambio. Si la ver
 
 ## Historial de versiones
 
+- **v0.6.0**: la GUI se reescribió en Swift + SwiftUI (mismas funciones, modelo de autorización y comportamiento de los registros; el interruptor ahora refleja siempre el estado real).
 - **v0.5.2**: añadido el icono personalizado de la app.
 - **v0.5.1**: corregido el interruptor que quedaba deshabilitado hasta pulsar “Actualizar estado” tras iniciar.
 - **v0.5**: selector de idioma en la ventana principal (English / 简体中文 / Español).

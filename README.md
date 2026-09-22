@@ -171,6 +171,7 @@ The app verifies the result by reading the value back after each change. If the 
 
 ## Version history
 
+- **v0.6.0**: The GUI was rewritten in Swift + SwiftUI (same features, authorization model and log behaviour; the switch now always reflects the real state).
 - **v0.5.2**: Added the custom app icon.
 - **v0.5.1**: Fixed the switch remaining disabled until “Refresh State” was clicked after launch.
 - **v0.5**: Added an in-window language selector (English / 简体中文 / Español).
