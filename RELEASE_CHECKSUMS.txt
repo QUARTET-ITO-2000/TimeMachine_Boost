@@ -1,0 +1,19 @@
+# Release digests
+#
+# SHA-256 digests of the artifacts published for this project. Download the file
+# and this list into the same directory, then verify with:
+#
+#     shasum -a 256 -c SHA256SUMS
+#
+# New releases are built and published from source by
+# .github/workflows/release.yml, which generates its own SHA256SUMS and prints the
+# digests in the release notes. This file records the archives published before
+# that workflow existed, plus the digest of the shipped shell tool as published
+# with v0.6.2.
+
+6d824843c18afc86c654f71d1bfd18da87dcb076631c3793d943081601d3c2a3  TimeMachineBoost-0.5-macOS.zip
+0cb12bc6fa797e3bed08ba400c122fc2cc95c0831a18c13a2a76427974d114fb  TimeMachineBoost-0.5.1-macOS.zip
+73f1c45a25234f53e31476f9b515a4bd29a46e73966dfe7a2ee512d02cb380eb  TimeMachineBoost-0.5.2-macOS.zip
+54e29605a3298c86037e4f62ecc70225187a0d1947830de34ada7a16061503dc  TimeMachineBoost-0.6.0-macOS.zip
+0a5a959752b1c4afa555770a2a2ff9a4c8d4f8cbc9c0b6fa9d783be7470de145  TimeMachineBoost-0.6.1-macOS.zip
+801ff36b43938a0e1f3cc837678c1608f82182bad6be765ae882a06b85bd3f18  boost_time_machine_tui.sh

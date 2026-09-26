@@ -1,0 +1,119 @@
+name: Build and release
+
+# Builds the GUI from source on every change, enforces the security invariant on
+# the shipped shell tool, and publishes tagged versions with SHA-256 digests.
+#
+# Publishing needs no Apple Developer account: the bundle is ad-hoc signed, the
+# same way App/build.sh signs local builds. If the project ever enrolls in the
+# Apple Developer Program, add Developer ID signing and notarization to the
+# "Assemble release assets" step.
+#
+# The ZIP is built for the runner's own architecture (arm64 on macos-14). For a
+# universal build, compile twice with -target arm64-apple-macos13.0 and
+# -target x86_64-apple-macos13.0 and merge the two binaries with lipo.
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and verify
+    runs-on: macos-14
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Build the app from source
+        run: sh App/build.sh "$RUNNER_TEMP/dist"
+
+      - name: Verify the bundle
+        run: |
+          plutil -lint "$RUNNER_TEMP/dist/TimeMachineBoost.app/Contents/Info.plist"
+          codesign --verify --strict --verbose=2 "$RUNNER_TEMP/dist/TimeMachineBoost.app"
+
+      - name: Verify privileged programs are pinned to absolute paths
+        run: |
+          set -eu
+          if grep -nE 'command -v (sysctl|sudo)' boost_time_machine_tui.sh; then
+            echo "::error file=boost_time_machine_tui.sh::sysctl and sudo must not be resolved through PATH"
+            exit 1
+          fi
+          grep -q '^SYSCTL_BIN="/usr/sbin/sysctl"$' boost_time_machine_tui.sh
+          grep -q '^SUDO_BIN="/usr/bin/sudo"$' boost_time_machine_tui.sh
+          sh -n boost_time_machine_tui.sh
+
+      - name: Assemble release assets
+        run: |
+          set -eu
+          VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' App/Info.plist)
+          mkdir -p "$RUNNER_TEMP/pkg"
+          # --norsrc keeps the archive layout identical to the published releases:
+          # no __MACOSX entries, and the ad-hoc signature still verifies on extract.
+          ditto -c -k --norsrc --keepParent \
+            "$RUNNER_TEMP/dist/TimeMachineBoost.app" \
+            "$RUNNER_TEMP/pkg/TimeMachineBoost-$VERSION-macOS.zip"
+          cp boost_time_machine_tui.sh "$RUNNER_TEMP/pkg/"
+          ( cd "$RUNNER_TEMP/pkg" && shasum -a 256 TimeMachineBoost-*.zip boost_time_machine_tui.sh > SHA256SUMS )
+          cat "$RUNNER_TEMP/pkg/SHA256SUMS"
+
+      - name: Upload the release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets
+          path: ${{ runner.temp }}/pkg/*
+          if-no-files-found: error
+
+  release:
+    name: Publish tagged release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: macos-14
+    permissions:
+      contents: write
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Download the built assets
+        uses: actions/download-artifact@v4
+        with:
+          name: release-assets
+          path: dist
+
+      - name: Check that the tag matches the bundle version
+        run: |
+          set -eu
+          VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' App/Info.plist)
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match App/Info.plist version v$VERSION"
+            exit 1
+          fi
+
+      - name: Create the release with digests
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
+          {
+            echo "Ad-hoc signed build produced from this tag by \`.github/workflows/release.yml\`."
+            echo
+            echo "Verify the download before opening it:"
+            echo
+            echo '```sh'
+            echo 'shasum -a 256 -c SHA256SUMS'
+            echo '```'
+            echo
+            echo '```'
+            cat dist/SHA256SUMS
+            echo '```'
+          } > "$RUNNER_TEMP/body.md"
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "Time Machine Boost $GITHUB_REF_NAME" \
+            --notes-file "$RUNNER_TEMP/body.md"
