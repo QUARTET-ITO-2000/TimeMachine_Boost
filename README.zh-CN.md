@@ -140,7 +140,8 @@ TimeMachineBoost/
 
 - 发布包仅做了 **ad-hoc 签名**，本项目**未加入 Apple Developer Program**。
 - GUI 未使用 Developer ID 签名，也未经过 Apple 公证，因此从网上下载后 macOS 可能提示“无法验证开发者”。
-- 打开方式：右键点击 App → 选择**打开**；或在终端中移除隔离属性：
+- **打开前先校验摘要。** 每个版本都会随压缩包发布 `SHA256SUMS`，可用 `shasum -a 256 -c SHA256SUMS` 校验（已发布历史压缩包的摘要另见 `RELEASE_CHECKSUMS.txt`）。
+- 摘要一致后，再按以下任一方式打开：右键点击 App → 选择**打开**；或在终端中移除隔离属性：
   ```sh
   xattr -dr com.apple.quarantine /Applications/TimeMachineBoost.app
   ```
@@ -152,7 +153,7 @@ TimeMachineBoost/
 | 操作 | 所需权限 |
 | --- | --- |
 | 读取当前状态 | 普通环境通常可直接读取；受限/沙盒环境需要“以管理员权限读取” |
-| 修改状态 | root。GUI 用 `osascript … with administrator privileges`，Shell 用 `sudo sysctl` |
+| 修改状态 | root。GUI 通过 `/usr/bin/osascript` 的 `administrator privileges`；Shell 用 `/usr/bin/sudo` 调用 `/usr/sbin/sysctl`，两者均使用绝对路径 |
 | 实时日志 | `/usr/bin/log stream --predicate 'subsystem == "com.apple.TimeMachine"'`，一般不需要管理员权限 |
 
 ## 常见问题
@@ -177,6 +178,7 @@ SwiftUI GUI 的主要控件都补充了 VoiceOver 的标签、数值与提示；
 
 ## 版本记录
 
+- **v0.6.2**：修复 Shell TUI/CLI 的安全问题：`sysctl` 与 `sudo` 改为使用固定绝对路径调用，不再依赖 `PATH` 解析（CWE-426、CWE-427）。发布压缩包开始附带 SHA-256 摘要，并新增 `.github/workflows/release.yml` 从源码构建并发布。
 - **v0.6.1**：SwiftUI GUI 无障碍改造（VoiceOver 标签/数值/提示、播报 Boost 切换与刷新/授权取消/失败的结果、日志区域语义、较大字体下的按钮布局）。未经读屏用户实测。
 - **v0.6.0**：GUI 使用 Swift + SwiftUI 重写（功能、授权模型与日志行为保持一致；开关改为以真实状态为准）。
 - **v0.5.2**：加入自定义 App 图标。

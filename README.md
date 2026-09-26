@@ -140,7 +140,8 @@ TimeMachineBoost/
 
 - Release binaries are **ad-hoc signed only**. This project is **not** enrolled in the Apple Developer Program.
 - The GUI is not Developer ID signed or notarized, so macOS may warn that the developer cannot be verified after downloading it.
-- To open after download: Control-click the app and choose **Open**, or remove the quarantine attribute in Terminal:
+- **Check the digest before opening anything.** Every release publishes `SHA256SUMS` next to the archive; verify it with `shasum -a 256 -c SHA256SUMS` (the digests of the archives published so far are also recorded in `RELEASE_CHECKSUMS.txt`).
+- Once the digest matches, open the app: Control-click it and choose **Open**, or remove the quarantine attribute in Terminal:
   ```sh
   xattr -dr com.apple.quarantine /Applications/TimeMachineBoost.app
   ```
@@ -152,7 +153,7 @@ TimeMachineBoost/
 | Action | What is needed |
 | --- | --- |
 | Read current state | Usually readable directly; restricted/sandboxed environments need the privileged read fallback |
-| Change the value | Root. GUI uses `osascript … with administrator privileges`; shell uses `sudo sysctl` |
+| Change the value | Root. GUI runs `/usr/bin/osascript` with `administrator privileges`; the shell runs `/usr/bin/sudo` with `/usr/sbin/sysctl`. Both privileged programs are addressed by absolute path |
 | Stream logs | `/usr/bin/log stream --predicate 'subsystem == "com.apple.TimeMachine"'`; normally no admin required |
 
 ## FAQ
@@ -177,6 +178,7 @@ Honest limit: this pass was written and reviewed by sighted developers. It was n
 
 ## Version history
 
+- **v0.6.2**: Security fix in the shell TUI/CLI: `sysctl` and `sudo` are invoked from fixed absolute paths instead of being resolved through `PATH` (CWE-426, CWE-427). Release archives now ship with SHA-256 digests, and `.github/workflows/release.yml` builds and publishes releases from source.
 - **v0.6.1**: Accessibility pass for the SwiftUI GUI (VoiceOver labels/values/hints, spoken results for Boost changes, refreshes, cancelled authorizations and failures, log viewer semantics, button layout at larger text sizes). Not verified with a screen-reader user.
 - **v0.6.0**: The GUI was rewritten in Swift + SwiftUI (same features, authorization model and log behaviour; the switch now always reflects the real state).
 - **v0.5.2**: Added the custom app icon.
