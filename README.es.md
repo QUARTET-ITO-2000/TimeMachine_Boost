@@ -140,7 +140,8 @@ TimeMachineBoost/
 
 - Los binarios publicados solo tienen **firma ad-hoc**. Este proyecto **no** está inscrito en el Apple Developer Program.
 - La GUI no está firmada con Developer ID ni notarizada, por lo que macOS puede avisar de que no se puede verificar al desarrollador después de descargarla.
-- Para abrirla tras la descarga: haz clic con la tecla Control y elige **Abrir**, o elimina el atributo de cuarentena en Terminal:
+- **Comprueba el resumen antes de abrir nada.** Cada versión publica `SHA256SUMS` junto al archivo; verifícalo con `shasum -a 256 -c SHA256SUMS` (los resúmenes de los archivos ya publicados también están en `RELEASE_CHECKSUMS.txt`).
+- Cuando el resumen coincida, abre la app: haz clic con la tecla Control y elige **Abrir**, o elimina el atributo de cuarentena en Terminal:
   ```sh
   xattr -dr com.apple.quarantine /Applications/TimeMachineBoost.app
   ```
@@ -152,7 +153,7 @@ TimeMachineBoost/
 | Acción | Qué se necesita |
 | --- | --- |
 | Leer el estado actual | Normalmente se puede leer directamente; en entornos restringidos se necesita la lectura privilegiada |
-| Cambiar el valor | Root. La GUI usa `osascript … with administrator privileges`; el shell usa `sudo sysctl` |
+| Cambiar el valor | Root. La GUI ejecuta `/usr/bin/osascript` con `administrator privileges`; el shell ejecuta `/usr/bin/sudo` con `/usr/sbin/sysctl`. Ambos programas privilegiados se invocan por ruta absoluta |
 | Ver registros | `/usr/bin/log stream --predicate 'subsystem == "com.apple.TimeMachine"'`; normalmente no requiere administrador |
 
 ## Preguntas frecuentes
@@ -177,6 +178,7 @@ Límite honesto: esta revisión la escribieron y probaron desarrolladores vident
 
 ## Historial de versiones
 
+- **v0.6.2**: Corrección de seguridad en la TUI/CLI de shell: `sysctl` y `sudo` se invocan desde rutas absolutas fijas en lugar de resolverse por `PATH` (CWE-426, CWE-427). Los archivos publicados incluyen ahora resúmenes SHA-256 y `.github/workflows/release.yml` compila y publica las versiones desde el código fuente.
 - **v0.6.1**: Revisión de accesibilidad de la GUI de SwiftUI (etiquetas, valores y sugerencias de VoiceOver; anuncio del resultado de los cambios de boost, actualizaciones, autorizaciones canceladas y fallos; semántica del visor de registros; diseño de los botones con texto grande). Sin verificar con una persona usuaria de lector de pantalla.
 - **v0.6.0**: la GUI se reescribió en Swift + SwiftUI (mismas funciones, modelo de autorización y comportamiento de los registros; el interruptor ahora refleja siempre el estado real).
 - **v0.5.2**: añadido el icono personalizado de la app.
