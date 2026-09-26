@@ -11,6 +11,11 @@ name: Build and release
 # The ZIP is built for the runner's own architecture (arm64 on macos-14). For a
 # universal build, compile twice with -target arm64-apple-macos13.0 and
 # -target x86_64-apple-macos13.0 and merge the two binaries with lipo.
+#
+# A tagged release publishes RELEASE_NOTES.md as the release body and appends the
+# new digests to RELEASE_CHECKSUMS.txt on main. Update RELEASE_NOTES.md for the
+# next version before creating its tag: the release job refuses to publish notes
+# that do not mention the tag being released.
 
 on:
   push:
@@ -96,24 +101,89 @@ jobs:
             exit 1
           fi
 
-      - name: Create the release with digests
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Compose the release body
         run: |
           set -eu
+          VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' App/Info.plist)
+          BODY="$RUNNER_TEMP/body.md"
+          if [ -f RELEASE_NOTES.md ]; then
+            # Stale notes are worse than no notes: refuse to publish notes that
+            # still describe a different version.
+            if ! grep -q "v$VERSION" RELEASE_NOTES.md; then
+              echo "::error file=RELEASE_NOTES.md::RELEASE_NOTES.md does not mention v$VERSION; update it before tagging"
+              exit 1
+            fi
+            cat RELEASE_NOTES.md > "$BODY"
+          else
+            {
+              echo "# Time Machine Boost v$VERSION"
+              echo
+              echo 'Ad-hoc signed build produced from this tag by `.github/workflows/release.yml`.'
+            } > "$BODY"
+          fi
           {
-            echo "Ad-hoc signed build produced from this tag by \`.github/workflows/release.yml\`."
             echo
-            echo "Verify the download before opening it:"
+            echo '---'
+            echo
+            echo '## Verify the download'
+            echo
+            echo 'Download the files below into one directory and run:'
             echo
             echo '```sh'
             echo 'shasum -a 256 -c SHA256SUMS'
             echo '```'
             echo
-            echo '```'
+            echo '```text'
             cat dist/SHA256SUMS
             echo '```'
-          } > "$RUNNER_TEMP/body.md"
+          } >> "$BODY"
+          echo "Release body is $(wc -l < "$BODY" | tr -d ' ') lines"
+
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
           gh release create "$GITHUB_REF_NAME" dist/* \
             --title "Time Machine Boost $GITHUB_REF_NAME" \
             --notes-file "$RUNNER_TEMP/body.md"
+
+  record-digests:
+    name: Record the release digests
+    needs: release
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: macos-14
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Download the published assets
+        uses: actions/download-artifact@v4
+        with:
+          name: release-assets
+          path: dist
+
+      - name: Append the digests to RELEASE_CHECKSUMS.txt
+        run: |
+          set -eu
+          {
+            echo
+            echo "# $GITHUB_REF_NAME ($(date -u +%Y-%m-%d))"
+            cat dist/SHA256SUMS
+          } >> RELEASE_CHECKSUMS.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add RELEASE_CHECKSUMS.txt
+          if git diff --cached --quiet; then
+            echo "Nothing to record"
+            exit 0
+          fi
+          git commit -m "chore(release): record $GITHUB_REF_NAME digests"
+          if ! git push origin HEAD:main; then
+            echo "::error::could not push the digest update to main. If the branch is protected, add a bypass for github-actions[bot], or run 'gh release view $GITHUB_REF_NAME' and append the digests to RELEASE_CHECKSUMS.txt by hand."
+            exit 1
+          fi
