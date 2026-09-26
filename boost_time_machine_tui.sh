@@ -5,8 +5,12 @@
 # Language selection: --lang zh|es|en > TIME_MACHINE_BOOST_LANG > LC_ALL/LC_MESSAGES/LANG > en
 
 SYSCTL_KEY="debug.lowpri_throttle_enabled"
-SYSCTL_BIN=$(command -v sysctl 2>/dev/null || true)
-SUDO_BIN=$(command -v sudo 2>/dev/null || true)
+# Privileged programs are addressed by absolute path. The credential prompt and
+# every privileged execution below must never run a "sysctl" or "sudo" that an
+# earlier directory in the caller's PATH happens to supply.
+# TPUT_BIN stays PATH-resolved: it never runs with privileges.
+SYSCTL_BIN="/usr/sbin/sysctl"
+SUDO_BIN="/usr/bin/sudo"
 TPUT_BIN=$(command -v tput 2>/dev/null || true)
 LOG_BIN=""
 if [ -x /usr/bin/log ]; then
@@ -58,7 +62,7 @@ if [ "$(uname -s 2>/dev/null)" != "Darwin" ]; then
     exit 1
 fi
 
-if [ -z "$SYSCTL_BIN" ]; then
+if [ ! -x "$SYSCTL_BIN" ]; then
     printf '%s\n' "$M_NO_SYSCTL" >&2
     exit 1
 fi
@@ -397,7 +401,7 @@ show_live_log() {
 }
 
 ensure_sudo() {
-    if [ -z "$SUDO_BIN" ]; then
+    if [ ! -x "$SUDO_BIN" ]; then
         LAST_MESSAGE="$M_SUDO_MISSING"
         return 1
     fi
@@ -588,7 +592,7 @@ cli_set_state() {
     target=$1
     label=$2
 
-    if [ -z "$SUDO_BIN" ]; then
+    if [ ! -x "$SUDO_BIN" ]; then
         printf '%s\n' "$M_NO_SUDO" >&2
         return 1
     fi
@@ -607,7 +611,7 @@ cli_set_state() {
 cli_toggle() {
     refresh_state >/dev/null 2>&1
     if [ "$STATE_VALUE" = "?" ]; then
-        if [ -n "$SUDO_BIN" ]; then
+        if [ -x "$SUDO_BIN" ]; then
             "$SUDO_BIN" -v || return 1
             refresh_state >/dev/null 2>&1 || true
         fi
